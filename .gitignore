@@ -1,2 +1,16 @@
 *.md
 /.github
+/.vscode
+/.idea
+
+# Node and build outputs
+/node_modules
+/dist
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Keep template env file in source control
+!.env.example
