@@ -12,7 +12,10 @@ import {
   getFocusTimerShellStyles,
 } from "./focus.styles";
 
-const Focus = () => {
+const START_FOCUS_EVENT = "lifeos:start-focus-session";
+const START_FOCUS_FLAG = "lifeos.pendingStartFocusSession";
+
+const Focus = ({ windowMode = false }) => {
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
@@ -48,34 +51,64 @@ const Focus = () => {
     },
   });
 
-  return (
-    <MainLayout>
-      <section style={getFocusPageStyles()}>
-        <h1 style={getFocusHeaderStyles()}>Focus</h1>
-        <p style={getFocusSubHeaderStyles()}>
-          Run a full Pomodoro cycle with focus blocks, short breaks, and long breaks.
-        </p>
+  useEffect(() => {
+    const handleStartFocus = () => {
+      selectMode("focus");
+      startTimer();
 
-        <div style={getFocusTimerShellStyles()}>
-          <TimerDisplay
-            timeLeft={timeLeft}
-            isRunning={isRunning}
-            currentMode={currentMode}
-            completedFocusSessions={completedFocusSessions}
-          />
-          <TimerControls
-            isRunning={isRunning}
-            currentMode={currentMode}
-            selectMode={selectMode}
-            startTimer={startTimer}
-            pauseTimer={pauseTimer}
-            resetTimer={resetTimer}
-          />
-          <SessionHistory sessions={sessions} />
-        </div>
-      </section>
-    </MainLayout>
+      if (typeof window !== "undefined") {
+        window.sessionStorage.removeItem(START_FOCUS_FLAG);
+      }
+    };
+
+    const shouldStartOnMount =
+      typeof window !== "undefined" && window.sessionStorage.getItem(START_FOCUS_FLAG);
+
+    if (shouldStartOnMount) {
+      window.requestAnimationFrame(() => {
+        handleStartFocus();
+      });
+    }
+
+    window.addEventListener(START_FOCUS_EVENT, handleStartFocus);
+
+    return () => {
+      window.removeEventListener(START_FOCUS_EVENT, handleStartFocus);
+    };
+  }, [selectMode, startTimer]);
+
+  const content = (
+    <section style={getFocusPageStyles()}>
+      <h1 style={getFocusHeaderStyles()}>Focus</h1>
+      <p style={getFocusSubHeaderStyles()}>
+        Run a full Pomodoro cycle with focus blocks, short breaks, and long breaks.
+      </p>
+
+      <div style={getFocusTimerShellStyles()}>
+        <TimerDisplay
+          timeLeft={timeLeft}
+          isRunning={isRunning}
+          currentMode={currentMode}
+          completedFocusSessions={completedFocusSessions}
+        />
+        <TimerControls
+          isRunning={isRunning}
+          currentMode={currentMode}
+          selectMode={selectMode}
+          startTimer={startTimer}
+          pauseTimer={pauseTimer}
+          resetTimer={resetTimer}
+        />
+        <SessionHistory sessions={sessions} />
+      </div>
+    </section>
   );
+
+  if (windowMode) {
+    return content;
+  }
+
+  return <MainLayout>{content}</MainLayout>;
 };
 
 export default Focus;

@@ -1,9 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
+import { arrayMove } from "@dnd-kit/sortable";
 import {
   getTasks,
   addTask as addTaskInService,
   toggleTask as toggleTaskInService,
   deleteTask as deleteTaskInService,
+  reorderTasks as reorderTasksInService,
+  updateTask as updateTaskInService,
+  TASKS_UPDATED_EVENT,
 } from "../services/taskService";
 import { notify } from "../../../shared/utils/notify";
 
@@ -25,11 +29,18 @@ const useTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  const loadTasks = async () => {
+    const loadedTasks = await getTasks();
+    setTasks(loadedTasks.map(normalizeTaskInput));
+  };
 
   useEffect(() => {
     let isActive = true;
 
-    const loadTasks = async () => {
+    const loadInitialTasks = async () => {
       const loadedTasks = await getTasks();
 
       if (isActive) {
@@ -37,10 +48,21 @@ const useTasks = () => {
       }
     };
 
-    loadTasks();
+    loadInitialTasks();
+
+    const handleTasksUpdated = async () => {
+      if (!isActive) {
+        return;
+      }
+
+      await loadTasks();
+    };
+
+    window.addEventListener(TASKS_UPDATED_EVENT, handleTasksUpdated);
 
     return () => {
       isActive = false;
+      window.removeEventListener(TASKS_UPDATED_EVENT, handleTasksUpdated);
     };
   }, []);
 
@@ -114,6 +136,60 @@ const useTasks = () => {
     }
   };
 
+  const reorderTasks = async (activeId, overId) => {
+    if (!activeId || !overId || activeId === overId) {
+      return;
+    }
+
+    const previousTasks = [...tasks];
+    const oldIndex = tasks.findIndex((task) => task.id === activeId);
+    const newIndex = tasks.findIndex((task) => task.id === overId);
+
+    if (oldIndex < 0 || newIndex < 0) {
+      return;
+    }
+
+    const reordered = arrayMove(tasks, oldIndex, newIndex).map((task, index) => ({
+      ...task,
+      order: index,
+    }));
+
+    setTasks(reordered);
+
+    try {
+      await reorderTasksInService(reordered.map((task) => task.id));
+    } catch {
+      setTasks(previousTasks);
+      notify({
+        title: "Reorder failed",
+        message: "Could not persist task order.",
+        type: "error",
+      });
+    }
+  };
+
+  const openTaskPanel = (taskId) => {
+    setSelectedTaskId(taskId);
+    setIsPanelOpen(true);
+  };
+
+  const closeTaskPanel = () => {
+    setIsPanelOpen(false);
+  };
+
+  const updateTask = async (id, updates) => {
+    try {
+      const updatedTasks = await updateTaskInService(id, updates);
+      setTasks(updatedTasks.map(normalizeTaskInput));
+    } catch {
+      notify({
+        title: "Task update failed",
+        message: "Could not save task details.",
+        type: "error",
+      });
+    }
+  };
+
   const filteredTasks = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
 
@@ -148,6 +224,10 @@ const useTasks = () => {
     };
   }, [filteredTasks]);
 
+  const selectedTask = useMemo(() => {
+    return tasks.find((task) => task.id === selectedTaskId) || null;
+  }, [selectedTaskId, tasks]);
+
   return {
     tasks,
     groupedTasks,
@@ -158,6 +238,12 @@ const useTasks = () => {
     addTask,
     toggleTask,
     deleteTask,
+    reorderTasks,
+    selectedTask,
+    isPanelOpen: isPanelOpen && Boolean(selectedTask),
+    openTaskPanel,
+    closeTaskPanel,
+    updateTask,
   };
 };
 

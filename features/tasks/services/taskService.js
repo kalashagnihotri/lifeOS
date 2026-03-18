@@ -1,5 +1,7 @@
 import { getCurrentUser } from "../../auth/services/authService";
 
+export const TASKS_UPDATED_EVENT = "lifeos:tasks:updated";
+
 const getTaskStorageKey = () => {
   const user = getCurrentUser();
 
@@ -29,10 +31,11 @@ const readTasks = () => {
       return [];
     }
 
-    return parsed.map((task) => ({
+    return parsed.map((task, index) => ({
       ...task,
       priority: ["low", "medium", "high"].includes(task?.priority) ? task.priority : "medium",
       dueDate: task?.dueDate || null,
+      order: Number.isFinite(task?.order) ? task.order : index,
     }));
   } catch {
     return [];
@@ -47,15 +50,24 @@ const writeTasks = (tasks) => {
   }
 
   window.localStorage.setItem(storageKey, JSON.stringify(tasks));
+  window.dispatchEvent(new Event(TASKS_UPDATED_EVENT));
 };
 
 export const getTasks = async () => {
-  return readTasks()
-    .sort((firstTask, secondTask) => (secondTask.createdAt || "").localeCompare(firstTask.createdAt || ""));
+  return readTasks().sort((firstTask, secondTask) => {
+    const orderGap = (firstTask.order ?? 0) - (secondTask.order ?? 0);
+
+    if (orderGap !== 0) {
+      return orderGap;
+    }
+
+    return (secondTask.createdAt || "").localeCompare(firstTask.createdAt || "");
+  });
 };
 
 export const addTask = async (task) => {
   const currentTasks = await getTasks();
+  const lastOrder = currentTasks.length ? Math.max(...currentTasks.map((item) => item.order || 0)) : -1;
   const nextTask = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
     title: task.title,
@@ -63,6 +75,7 @@ export const addTask = async (task) => {
     dueDate: task?.dueDate || null,
     completed: false,
     createdAt: new Date().toISOString(),
+    order: lastOrder + 1,
   };
   writeTasks([nextTask, ...currentTasks]);
 
@@ -76,9 +89,12 @@ export const toggleTask = async (id) => {
       return task;
     }
 
+    const nextCompleted = !task.completed;
+
     return {
       ...task,
-      completed: !task.completed,
+      completed: nextCompleted,
+      completedAt: nextCompleted ? new Date().toISOString() : null,
     };
   });
   writeTasks(nextTasks);
@@ -88,7 +104,61 @@ export const toggleTask = async (id) => {
 
 export const deleteTask = async (id) => {
   const existingTasks = await getTasks();
-  const nextTasks = existingTasks.filter((task) => task.id !== id);
+  const nextTasks = existingTasks.filter((task) => task.id !== id).map((task, index) => ({
+    ...task,
+    order: index,
+  }));
+  writeTasks(nextTasks);
+
+  return getTasks();
+};
+
+export const reorderTasks = async (orderedTaskIds) => {
+  const existingTasks = await getTasks();
+
+  if (!Array.isArray(orderedTaskIds) || !orderedTaskIds.length) {
+    return existingTasks;
+  }
+
+  const orderById = new Map(orderedTaskIds.map((id, index) => [id, index]));
+  const reorderedTasks = existingTasks
+    .map((task) => {
+      if (!orderById.has(task.id)) {
+        return task;
+      }
+
+      return {
+        ...task,
+        order: orderById.get(task.id),
+      };
+    })
+    .sort((firstTask, secondTask) => (firstTask.order ?? 0) - (secondTask.order ?? 0));
+
+  writeTasks(reorderedTasks);
+
+  return getTasks();
+};
+
+export const updateTask = async (id, updates = {}) => {
+  const existingTasks = await getTasks();
+  const nextTasks = existingTasks.map((task) => {
+    if (task.id !== id) {
+      return task;
+    }
+
+    const normalizedTitle = String(updates?.title ?? task.title).trim();
+    const normalizedPriority = ["low", "medium", "high"].includes(updates?.priority)
+      ? updates.priority
+      : task.priority;
+
+    return {
+      ...task,
+      title: normalizedTitle || task.title,
+      priority: normalizedPriority,
+      dueDate: updates?.dueDate ?? task.dueDate ?? null,
+    };
+  });
+
   writeTasks(nextTasks);
 
   return getTasks();

@@ -55,8 +55,7 @@ export const getTaskInputStyles = ({ isFocused = false }) => ({
   fontWeight: typography.fontWeights.regular,
   outline: "none",
   boxShadow: isFocused ? `0 0 0 ${spacing.xs}px ${colors.secondary}` : "none",
-  transition:
-    "border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease",
+  transition: "border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease",
 });
 
 export const getTaskSelectStyles = () => ({
@@ -194,11 +193,29 @@ export const getTaskListStyles = () => ({
   gap: `${spacing.sm}px`,
 });
 
+export const getTaskDropZoneStyles = ({ isDragActive = false, isReceivingDrop = false }) => ({
+  border: `1px solid ${isReceivingDrop ? "rgba(167, 176, 255, 0.7)" : colors.border}`,
+  borderRadius: spacing.md,
+  padding: `${spacing.sm}px`,
+  background: isReceivingDrop
+    ? "linear-gradient(165deg, rgba(26, 35, 56, 0.94) 0%, rgba(17, 24, 39, 0.88) 100%)"
+    : isDragActive
+      ? "linear-gradient(165deg, rgba(18, 25, 38, 0.84) 0%, rgba(13, 19, 32, 0.82) 100%)"
+      : "transparent",
+  boxShadow: isReceivingDrop
+    ? "0 0 0 1px rgba(167, 176, 255, 0.32), 0 14px 26px rgba(8, 10, 15, 0.34)"
+    : "none",
+  transition: "border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease",
+});
+
 export const getTaskItemStyles = ({
   isHovered = false,
   completed = false,
   isMounted = true,
   isRemoving = false,
+  isDragging = false,
+  dragTransform = undefined,
+  dragTransition = undefined,
 }) => ({
   display: "flex",
   alignItems: "flex-start",
@@ -217,8 +234,77 @@ export const getTaskItemStyles = ({
         ? "translateX(0)"
         : "translateX(-8px)",
   animation: isMounted && !isRemoving ? "lifeosFadeSlideUp 320ms ease" : "none",
-  boxShadow: isHovered ? "0 12px 22px rgba(8, 10, 15, 0.34)" : "none",
-  transition: "background-color 0.25s ease, opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
+  boxShadow: isDragging
+    ? "0 22px 30px rgba(8, 10, 15, 0.5)"
+    : isHovered
+      ? "0 12px 22px rgba(8, 10, 15, 0.34)"
+      : "none",
+  cursor: isDragging ? "grabbing" : "default",
+  zIndex: isDragging ? 10 : "auto",
+  position: "relative",
+  transition: dragTransition
+    ? `${dragTransition}, background-color 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease`
+    : "background-color 0.25s ease, opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
+  transformOrigin: "center",
+  ...(dragTransform ? { transform: dragTransform } : {}),
+});
+
+export const getTaskDragHandleStyles = ({ isDragging = false, isHovered = false }) => ({
+  border: `1px solid ${isHovered || isDragging ? "rgba(167, 176, 255, 0.75)" : colors.border}`,
+  borderRadius: spacing.sm,
+  backgroundColor:
+    isDragging || isHovered ? "rgba(167, 176, 255, 0.24)" : "rgba(15, 17, 23, 0.5)",
+  color: isDragging || isHovered ? colors.text.primary : colors.text.muted,
+  width: `${spacing.xl}px`,
+  height: `${spacing.xl}px`,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: isDragging ? "grabbing" : "grab",
+  flexShrink: 0,
+  marginTop: `${spacing.xs}px`,
+  transform: isDragging ? "scale(1.07)" : isHovered ? "scale(1.03)" : "scale(1)",
+  boxShadow: isDragging ? "0 0 0 1px rgba(167, 176, 255, 0.35), 0 8px 14px rgba(8, 10, 15, 0.34)" : "none",
+  transition: "background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease",
+});
+
+export const getTaskDragOverlayStyles = () => ({
+  display: "flex",
+  alignItems: "center",
+  gap: `${spacing.sm}px`,
+  maxWidth: "min(90vw, 680px)",
+  borderRadius: spacing.md,
+  border: "1px solid rgba(167, 176, 255, 0.78)",
+  padding: `${spacing.sm}px ${spacing.md}px`,
+  background: "linear-gradient(165deg, rgba(31, 41, 66, 0.98) 0%, rgba(20, 27, 41, 0.96) 100%)",
+  boxShadow: "0 28px 40px rgba(8, 10, 15, 0.56), 0 0 0 1px rgba(167, 176, 255, 0.24)",
+  transform: "rotate(-0.75deg) scale(1.01)",
+  color: colors.text.primary,
+});
+
+export const getTaskDragOverlayTitleStyles = () => ({
+  margin: 0,
+  color: colors.text.primary,
+  fontFamily: typography.fontFamily,
+  fontSize: typography.fontSizes.medium,
+  fontWeight: typography.fontWeights.medium,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
+
+export const getTaskDragOverlayBadgeStyles = ({ priority = "medium" }) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  borderRadius: spacing.sm,
+  border: `1px solid ${priorityColorByLevel[priority] || priorityColorByLevel.medium}`,
+  backgroundColor: "rgba(15, 17, 23, 0.5)",
+  color: priorityColorByLevel[priority] || priorityColorByLevel.medium,
+  padding: `${spacing.xs}px ${spacing.sm}px`,
+  fontFamily: typography.fontFamily,
+  fontSize: typography.fontSizes.small,
+  fontWeight: typography.fontWeights.medium,
+  textTransform: "capitalize",
 });
 
 export const getTaskMainStyles = () => ({

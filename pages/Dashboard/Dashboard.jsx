@@ -3,6 +3,8 @@ import MainLayout from "../../layouts/MainLayout/MainLayout";
 import StatCard from "../../features/dashboard/components/StatCard";
 import ProductivityChart from "../../features/dashboard/components/ProductivityChart";
 import TaskSummary from "../../features/dashboard/components/TaskSummary";
+import ActivityTimeline from "../../features/dashboard/components/ActivityTimeline";
+import DailyScoreCard from "../../features/analytics/components/DailyScoreCard";
 import { getTasks } from "../../features/tasks/services/taskService";
 import { getHabits } from "../../features/habits/services/habitService";
 import { calculateStreak } from "../../features/habits/utils/habitUtils";
@@ -25,7 +27,7 @@ const formatFocusTime = (minutes) => {
   return `${hours}h ${String(mins).padStart(2, "0")}m`;
 };
 
-const Dashboard = () => {
+const Dashboard = ({ windowMode = false }) => {
   const [tasks, setTasks] = useState([]);
   const [habits, setHabits] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -88,33 +90,45 @@ const Dashboard = () => {
     ];
   }, [tasks, sessions, habits]);
 
-  return (
-    <MainLayout>
-      <div style={getDashboardPageStyles()}>
-        <section style={getDashboardSectionStyles()}>
-          <h2 style={getDashboardTitleStyles()}>Overview</h2>
-          <div style={getStatGridStyles()}>
-            {stats.map((stat) => (
-              <StatCard
-                key={stat.title}
-                title={stat.title}
-                value={stat.value}
-                description={stat.description}
-              />
-            ))}
-          </div>
-        </section>
+  const content = (
+    <div style={getDashboardPageStyles()}>
+      <section style={getDashboardSectionStyles()}>
+        <h2 style={getDashboardTitleStyles()}>Overview</h2>
+        <div style={getStatGridStyles()}>
+          {stats.map((stat) => (
+            <StatCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+              description={stat.description}
+            />
+          ))}
+        </div>
+      </section>
 
-        <section style={getDashboardSectionStyles()}>
-          <ProductivityChart sessions={sessions} />
-        </section>
+      <section style={getDashboardSectionStyles()}>
+        <ProductivityChart sessions={sessions} />
+      </section>
 
-        <section style={getDashboardSectionStyles()}>
-          <TaskSummary tasks={tasks} />
-        </section>
-      </div>
-    </MainLayout>
+      <section style={getDashboardSectionStyles()}>
+        <DailyScoreCard tasks={tasks} habits={habits} sessions={sessions} />
+      </section>
+
+      <section style={getDashboardSectionStyles()}>
+        <TaskSummary tasks={tasks} />
+      </section>
+
+      <section style={getDashboardSectionStyles()}>
+        <ActivityTimeline tasks={tasks} habits={habits} sessions={sessions} />
+      </section>
+    </div>
   );
+
+  if (windowMode) {
+    return content;
+  }
+
+  return <MainLayout>{content}</MainLayout>;
 };
 
 export default Dashboard;

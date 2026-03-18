@@ -44,6 +44,9 @@ const readHabits = () => {
       ...habit,
       category: normalizeCategory(habit?.category),
       completedDates: Array.isArray(habit?.completedDates) ? habit.completedDates : [],
+      completionLog: Array.isArray(habit?.completionLog)
+        ? habit.completionLog.filter((entry) => entry?.date && entry?.timestamp)
+        : [],
     }));
   } catch {
     return [];
@@ -73,6 +76,7 @@ export const addHabit = async (habit) => {
     category: normalizeCategory(habit?.category),
     createdAt: new Date().toISOString(),
     completedDates: [],
+    completionLog: [],
   };
   writeHabits([nextHabit, ...existingHabits]);
 
@@ -88,14 +92,25 @@ export const toggleHabitForToday = async (id) => {
     }
 
     const completedDates = Array.isArray(habit.completedDates) ? habit.completedDates : [];
+    const completionLog = Array.isArray(habit.completionLog) ? habit.completionLog : [];
     const hasCompletedToday = completedDates.includes(today);
     const nextCompletedDates = hasCompletedToday
       ? completedDates.filter((date) => date !== today)
       : [...completedDates, today];
+    const nextCompletionLog = hasCompletedToday
+      ? completionLog.filter((entry) => entry.date !== today)
+      : [
+          ...completionLog.filter((entry) => entry.date !== today),
+          {
+            date: today,
+            timestamp: new Date().toISOString(),
+          },
+        ];
 
     return {
       ...habit,
       completedDates: nextCompletedDates,
+      completionLog: nextCompletionLog,
     };
   });
   writeHabits(nextHabits);

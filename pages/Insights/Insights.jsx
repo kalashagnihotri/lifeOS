@@ -7,20 +7,24 @@ import {
   getInsightsSubHeaderStyles,
 } from "./insights.styles";
 
-const Insights = () => {
+const Insights = ({ windowMode = false }) => {
   const { insights, isLoading } = useInsights();
 
-  return (
-    <MainLayout>
-      <section style={getInsightsPageStyles()}>
-        <h1 style={getInsightsHeaderStyles()}>AI Insights</h1>
-        <p style={getInsightsSubHeaderStyles()}>
-          AI-generated recommendations based on your recent productivity activity.
-        </p>
-        <InsightList insights={insights} isLoading={isLoading} />
-      </section>
-    </MainLayout>
+  const content = (
+    <section style={getInsightsPageStyles()}>
+      <h1 style={getInsightsHeaderStyles()}>AI Insights</h1>
+      <p style={getInsightsSubHeaderStyles()}>
+        AI-generated recommendations based on your recent productivity activity.
+      </p>
+      <InsightList insights={insights} isLoading={isLoading} />
+    </section>
   );
+
+  if (windowMode) {
+    return content;
+  }
+
+  return <MainLayout>{content}</MainLayout>;
 };
 
 export default Insights;
