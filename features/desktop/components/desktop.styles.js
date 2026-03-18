@@ -24,12 +24,16 @@ export const getDesktopSurfaceStyles = () => ({
 
 export const getDesktopIconGridStyles = () => ({
   position: "absolute",
-  top: `clamp(${spacing.xl}px, 4vh, ${spacing.xxl}px)`,
-  left: `clamp(${spacing.md}px, 3vw, ${spacing.xl}px)`,
-  display: "grid",
-  gridTemplateColumns: "repeat(2, minmax(82px, 96px))",
-  gap: `${spacing.md}px`,
+  inset: 0,
   zIndex: 15,
+});
+
+export const getAppIconPositionStyles = ({ x = 0, y = 0, isDragging = false }) => ({
+  position: "absolute",
+  left: `${x}px`,
+  top: `${y}px`,
+  zIndex: isDragging ? 24 : 16,
+  touchAction: "none",
 });
 
 export const getAppIconButtonStyles = ({ isHovered = false }) => ({

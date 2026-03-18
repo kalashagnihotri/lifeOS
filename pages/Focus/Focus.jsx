@@ -17,6 +17,7 @@ const START_FOCUS_FLAG = "lifeos.pendingStartFocusSession";
 
 const Focus = ({ windowMode = false }) => {
   const [sessions, setSessions] = useState([]);
+  const [autoTargetMinutes, setAutoTargetMinutes] = useState("120");
 
   useEffect(() => {
     let isActive = true;
@@ -45,11 +46,22 @@ const Focus = ({ windowMode = false }) => {
     startTimer,
     pauseTimer,
     resetTimer,
+    autoPlan,
+    configureAutoPlan,
+    clearAutoPlan,
   } = useFocusTimer({
     onSessionComplete: (updatedSessions) => {
       setSessions(updatedSessions);
     },
   });
+
+  const applyAutoPlan = () => {
+    configureAutoPlan(autoTargetMinutes, { autoStart: true });
+  };
+
+  const clearAutoPlanState = () => {
+    clearAutoPlan();
+  };
 
   useEffect(() => {
     const handleStartFocus = () => {
@@ -90,6 +102,7 @@ const Focus = ({ windowMode = false }) => {
           isRunning={isRunning}
           currentMode={currentMode}
           completedFocusSessions={completedFocusSessions}
+          autoPlan={autoPlan}
         />
         <TimerControls
           isRunning={isRunning}
@@ -98,6 +111,11 @@ const Focus = ({ windowMode = false }) => {
           startTimer={startTimer}
           pauseTimer={pauseTimer}
           resetTimer={resetTimer}
+          autoTargetMinutes={autoTargetMinutes}
+          setAutoTargetMinutes={setAutoTargetMinutes}
+          autoPlan={autoPlan}
+          applyAutoPlan={applyAutoPlan}
+          clearAutoPlan={clearAutoPlanState}
         />
         <SessionHistory sessions={sessions} />
       </div>

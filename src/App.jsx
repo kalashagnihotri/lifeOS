@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from "react";
 import { useEffect } from "react";
-import { Brain, CheckSquare, Flame, LayoutDashboard, Timer } from "lucide-react";
+import { BedDouble, Brain, CheckSquare, Flame, LayoutDashboard, Timer } from "lucide-react";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Tasks from "../pages/Tasks/Tasks";
 import Habits from "../pages/Habits/Habits";
 import Focus from "../pages/Focus/Focus";
 import Insights from "../pages/Insights/Insights";
+import Sleep from "../pages/Sleep/Sleep";
 import LoginButton from "../features/auth/components/LoginButton";
 import useAuth from "../features/auth/hooks/useAuth";
 import {
@@ -68,6 +69,14 @@ const APP_REGISTRY = {
     icon: Brain,
     component: Insights,
   },
+  sleep: {
+    id: "sleep",
+    title: "Sleep",
+    label: "Sleep",
+    hash: "#/sleep",
+    icon: BedDouble,
+    component: Sleep,
+  },
 };
 
 const APP_BY_HASH = {
@@ -76,6 +85,7 @@ const APP_BY_HASH = {
   "#/habits": APP_REGISTRY.habits,
   "#/focus": APP_REGISTRY.focus,
   "#/insights": APP_REGISTRY.insights,
+  "#/sleep": APP_REGISTRY.sleep,
 };
 
 const DESKTOP_HASH = "#/desktop";
@@ -85,6 +95,7 @@ const DESKTOP_APPS = [
   APP_REGISTRY.tasks,
   APP_REGISTRY.habits,
   APP_REGISTRY.focus,
+  APP_REGISTRY.sleep,
   APP_REGISTRY.insights,
 ];
 

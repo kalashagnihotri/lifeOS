@@ -1,5 +1,9 @@
 import Button from "../../../shared/components/Button/Button";
 import {
+  getAutoPlanHintStyles,
+  getAutoPlanInputStyles,
+  getAutoPlanRowStyles,
+  getAutoPlanShellStyles,
   getPomodoroModeButtonStyles,
   getPomodoroModeSelectorStyles,
   getTimerControlsStyles,
@@ -18,6 +22,11 @@ const TimerControls = ({
   startTimer,
   pauseTimer,
   resetTimer,
+  autoTargetMinutes,
+  setAutoTargetMinutes,
+  autoPlan,
+  applyAutoPlan,
+  clearAutoPlan,
 }) => {
   return (
     <>
@@ -53,6 +62,31 @@ const TimerControls = ({
         />
         <Button label="Reset" onClick={resetTimer} variant="danger" size="medium" />
       </div>
+
+      <section style={getAutoPlanShellStyles()}>
+        <div style={getAutoPlanRowStyles()}>
+          <input
+            type="number"
+            min="1"
+            step="5"
+            value={autoTargetMinutes}
+            onChange={(event) => setAutoTargetMinutes(event.target.value)}
+            style={getAutoPlanInputStyles()}
+            placeholder="Target focus minutes"
+          />
+          <Button label="Auto Plan" onClick={applyAutoPlan} variant="primary" size="small" />
+          <Button label="Clear" onClick={clearAutoPlan} variant="secondary" size="small" />
+        </div>
+        {autoPlan?.isEnabled ? (
+          <p style={getAutoPlanHintStyles()}>
+            {`Plan: ${autoPlan.targetSessions} focus sessions • ${autoPlan.totalBreakMinutes} break min • total ${autoPlan.plannedTotalMinutes} min`}
+          </p>
+        ) : (
+          <p style={getAutoPlanHintStyles()}>
+            Enter your target focus minutes and LifeOS will calculate the session and break plan.
+          </p>
+        )}
+      </section>
     </>
   );
 };

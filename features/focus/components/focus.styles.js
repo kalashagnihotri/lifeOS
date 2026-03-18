@@ -83,6 +83,44 @@ export const getPomodoroMetaStyles = () => ({
   letterSpacing: "0.02em",
 });
 
+export const getAutoPlanShellStyles = () => ({
+  border: `1px solid ${colors.border}`,
+  borderRadius: spacing.md,
+  backgroundColor: "rgba(20, 20, 30, 0.74)",
+  padding: `${spacing.sm}px`,
+  display: "flex",
+  flexDirection: "column",
+  gap: `${spacing.sm}px`,
+});
+
+export const getAutoPlanRowStyles = () => ({
+  display: "flex",
+  alignItems: "center",
+  gap: `${spacing.sm}px`,
+  flexWrap: "wrap",
+});
+
+export const getAutoPlanInputStyles = () => ({
+  width: "190px",
+  border: `1px solid ${colors.border}`,
+  borderRadius: spacing.sm,
+  backgroundColor: "rgba(15, 17, 23, 0.82)",
+  color: colors.text.primary,
+  padding: `${spacing.xs}px ${spacing.sm}px`,
+  fontFamily: typography.fontFamily,
+  fontSize: typography.fontSizes.small,
+  fontWeight: typography.fontWeights.medium,
+  outline: "none",
+});
+
+export const getAutoPlanHintStyles = () => ({
+  margin: 0,
+  color: colors.text.muted,
+  fontFamily: typography.fontFamily,
+  fontSize: typography.fontSizes.small,
+  fontWeight: typography.fontWeights.regular,
+});
+
 export const getSessionSectionStyles = () => ({
   border: `1px solid ${colors.border}`,
   borderRadius: spacing.lg,

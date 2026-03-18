@@ -10,6 +10,21 @@ const POMODORO_MINUTES = {
 };
 const SESSIONS_PER_LONG_BREAK = 4;
 
+const calculateBreakMinutes = (sessionsCount) => {
+  if (sessionsCount <= 1) {
+    return 0;
+  }
+
+  let totalBreakMinutes = 0;
+
+  for (let breakIndex = 1; breakIndex < sessionsCount; breakIndex += 1) {
+    const shouldTakeLongBreak = breakIndex % SESSIONS_PER_LONG_BREAK === 0;
+    totalBreakMinutes += shouldTakeLongBreak ? POMODORO_MINUTES.longBreak : POMODORO_MINUTES.shortBreak;
+  }
+
+  return totalBreakMinutes;
+};
+
 const useFocusTimer = ({ onSessionComplete } = {}) => {
   const [currentMode, setCurrentMode] = useState("focus");
   const [completedFocusSessions, setCompletedFocusSessions] = useState(0);
@@ -18,6 +33,7 @@ const useFocusTimer = ({ onSessionComplete } = {}) => {
   }, [currentMode]);
   const [timeLeft, setTimeLeft] = useState(totalSeconds);
   const [isRunning, setIsRunning] = useState(false);
+  const [autoPlan, setAutoPlan] = useState(null);
   const intervalRef = useRef(null);
 
   useEffect(() => {
@@ -43,6 +59,7 @@ const useFocusTimer = ({ onSessionComplete } = {}) => {
 
     const handleTimerCompletion = () => {
       setIsRunning(false);
+      const hasAutoPlan = Boolean(autoPlan?.isEnabled);
 
       if (currentMode === "focus") {
         const focusMinutes = POMODORO_MINUTES.focus;
@@ -69,9 +86,26 @@ const useFocusTimer = ({ onSessionComplete } = {}) => {
 
         setCompletedFocusSessions((previousCount) => {
           const nextCount = previousCount + 1;
+
+          if (hasAutoPlan && nextCount >= autoPlan.targetSessions) {
+            setCurrentMode("focus");
+            setIsRunning(false);
+
+            notify({
+              title: "Plan complete",
+              message: `You completed ${autoPlan.targetSessions} focus sessions in this plan.`,
+              type: "success",
+            });
+
+            return nextCount;
+          }
+
           const shouldTakeLongBreak = nextCount % SESSIONS_PER_LONG_BREAK === 0;
           const nextMode = shouldTakeLongBreak ? "longBreak" : "shortBreak";
           setCurrentMode(nextMode);
+          if (hasAutoPlan) {
+            setIsRunning(true);
+          }
 
           return nextCount;
         });
@@ -80,10 +114,18 @@ const useFocusTimer = ({ onSessionComplete } = {}) => {
       }
 
       setCurrentMode("focus");
+      const shouldAutoContinue =
+        hasAutoPlan && completedFocusSessions < (autoPlan?.targetSessions || 0);
+
+      if (shouldAutoContinue) {
+        setIsRunning(true);
+      }
 
       notify({
         title: "Break complete",
-        message: "Ready for the next focus session.",
+        message: shouldAutoContinue
+          ? "Starting your next focus session."
+          : "Ready for the next focus session.",
         type: "info",
       });
     };
@@ -111,7 +153,7 @@ const useFocusTimer = ({ onSessionComplete } = {}) => {
         intervalRef.current = null;
       }
     };
-  }, [currentMode, isRunning, onSessionComplete]);
+  }, [autoPlan, completedFocusSessions, currentMode, isRunning, onSessionComplete]);
 
   const selectMode = (mode) => {
     if (!POMODORO_MINUTES[mode]) {
@@ -139,6 +181,40 @@ const useFocusTimer = ({ onSessionComplete } = {}) => {
     setTimeLeft(totalSeconds);
   };
 
+  const configureAutoPlan = (targetFocusMinutes, options = {}) => {
+    const { autoStart = false } = options;
+    const parsedTargetMinutes = Number(targetFocusMinutes);
+
+    if (!Number.isFinite(parsedTargetMinutes) || parsedTargetMinutes <= 0) {
+      return null;
+    }
+
+    const roundedTargetMinutes = Math.round(parsedTargetMinutes);
+    const targetSessions = Math.max(1, Math.ceil(roundedTargetMinutes / POMODORO_MINUTES.focus));
+    const totalBreakMinutes = calculateBreakMinutes(targetSessions);
+    const plannedTotalMinutes = targetSessions * POMODORO_MINUTES.focus + totalBreakMinutes;
+
+    const plan = {
+      isEnabled: true,
+      targetFocusMinutes: roundedTargetMinutes,
+      targetSessions,
+      totalBreakMinutes,
+      plannedTotalMinutes,
+    };
+
+    setAutoPlan(plan);
+    setIsRunning(Boolean(autoStart));
+    setCurrentMode("focus");
+    setCompletedFocusSessions(0);
+    setTimeLeft(minutesToSeconds(POMODORO_MINUTES.focus));
+
+    return plan;
+  };
+
+  const clearAutoPlan = () => {
+    setAutoPlan(null);
+  };
+
   return {
     timeLeft,
     isRunning,
@@ -148,6 +224,9 @@ const useFocusTimer = ({ onSessionComplete } = {}) => {
     startTimer,
     pauseTimer,
     resetTimer,
+    autoPlan,
+    configureAutoPlan,
+    clearAutoPlan,
   };
 };
 

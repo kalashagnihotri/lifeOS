@@ -12,14 +12,18 @@ const modeLabelById = {
   longBreak: "Long Break",
 };
 
-const TimerDisplay = ({ timeLeft, isRunning, currentMode, completedFocusSessions }) => {
+const TimerDisplay = ({ timeLeft, isRunning, currentMode, completedFocusSessions, autoPlan }) => {
   const modeLabel = modeLabelById[currentMode] || "Pomodoro";
+  const autoPlanMeta = autoPlan?.isEnabled
+    ? `Plan progress: ${Math.min(completedFocusSessions, autoPlan.targetSessions)}/${autoPlan.targetSessions}`
+    : null;
 
   return (
     <section style={getTimerCardStyles({ isRunning })}>
-      <p style={getTimerLabelStyles()}>{modeLabel}</p>
+      <p style={getTimerLabelStyles()}>{`Now: ${modeLabel}`}</p>
       <p style={getTimerDisplayStyles({ isRunning })}>{formatTime(timeLeft)}</p>
       <p style={getPomodoroMetaStyles()}>{`Completed focus blocks: ${completedFocusSessions}`}</p>
+      {autoPlanMeta ? <p style={getPomodoroMetaStyles()}>{autoPlanMeta}</p> : null}
     </section>
   );
 };

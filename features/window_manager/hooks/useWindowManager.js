@@ -599,11 +599,59 @@ const useWindowManager = ({ initialWindows = [] } = {}) => {
       const safeId = String(id);
       const targetWindow = openWindows.find((windowItem) => windowItem.id === safeId);
 
-      if (!targetWindow || targetWindow.isMaximized) {
+      if (!targetWindow) {
         return;
       }
 
       focusWindow(safeId);
+
+      if (targetWindow.isMaximized) {
+        const restoredWidth = Number.isFinite(targetWindow.restoreBounds?.size?.width)
+          ? targetWindow.restoreBounds.size.width
+          : DEFAULT_SIZE.width;
+        const restoredHeight = Number.isFinite(targetWindow.restoreBounds?.size?.height)
+          ? targetWindow.restoreBounds.size.height
+          : DEFAULT_SIZE.height;
+        const pointerRatio = Math.min(0.9, Math.max(0.1, event.clientX / Math.max(window.innerWidth, 1)));
+        const restoredX = Math.max(0, Math.round(event.clientX - restoredWidth * pointerRatio));
+        const restoredY = Math.max(0, Math.round(event.clientY - 18));
+
+        dragRef.current = {
+          id: safeId,
+          offsetX: event.clientX - restoredX,
+          offsetY: event.clientY - restoredY,
+          width: restoredWidth,
+          height: restoredHeight,
+          lastClientX: event.clientX,
+          lastClientY: event.clientY,
+        };
+
+        setOpenWindows((previousWindows) => {
+          return previousWindows.map((windowItem) => {
+            if (windowItem.id !== safeId) {
+              return windowItem;
+            }
+
+            return {
+              ...windowItem,
+              isMaximized: false,
+              isDragging: true,
+              snapPreview: null,
+              position: {
+                x: restoredX,
+                y: restoredY,
+              },
+              size: {
+                width: restoredWidth,
+                height: restoredHeight,
+              },
+              restoreBounds: null,
+            };
+          });
+        });
+
+        return;
+      }
 
       dragRef.current = {
         id: safeId,
