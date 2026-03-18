@@ -10,27 +10,41 @@ const useTasks = () => {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    setTasks(getTasks());
+    let isActive = true;
+
+    const loadTasks = async () => {
+      const loadedTasks = await getTasks();
+
+      if (isActive) {
+        setTasks(loadedTasks);
+      }
+    };
+
+    loadTasks();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
-  const addTask = (title) => {
+  const addTask = async (title) => {
     const normalizedTitle = title.trim();
 
     if (!normalizedTitle) {
       return;
     }
 
-    const updatedTasks = addTaskInService({ title: normalizedTitle });
+    const updatedTasks = await addTaskInService({ title: normalizedTitle });
     setTasks(updatedTasks);
   };
 
-  const toggleTask = (id) => {
-    const updatedTasks = toggleTaskInService(id);
+  const toggleTask = async (id) => {
+    const updatedTasks = await toggleTaskInService(id);
     setTasks(updatedTasks);
   };
 
-  const deleteTask = (id) => {
-    const updatedTasks = deleteTaskInService(id);
+  const deleteTask = async (id) => {
+    const updatedTasks = await deleteTaskInService(id);
     setTasks(updatedTasks);
   };
 

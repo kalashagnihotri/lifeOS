@@ -31,13 +31,23 @@ const useInsights = () => {
   const [insights, setInsights] = useState([]);
 
   useEffect(() => {
-    const tasks = getTasks();
-    const habits = getHabits();
-    const sessions = getSessions();
-    const mood = getMoodSnapshot();
+    let isActive = true;
 
-    const generatedInsights = generateInsights({ tasks, habits, sessions, mood });
-    setInsights(generatedInsights);
+    const loadInsights = async () => {
+      const [tasks, habits, sessions] = await Promise.all([getTasks(), getHabits(), getSessions()]);
+      const mood = getMoodSnapshot();
+      const generatedInsights = generateInsights({ tasks, habits, sessions, mood });
+
+      if (isActive) {
+        setInsights(generatedInsights);
+      }
+    };
+
+    loadInsights();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   return { insights };

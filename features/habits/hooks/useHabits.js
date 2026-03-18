@@ -10,27 +10,41 @@ const useHabits = () => {
   const [habits, setHabits] = useState([]);
 
   useEffect(() => {
-    setHabits(getHabits());
+    let isActive = true;
+
+    const loadHabits = async () => {
+      const loadedHabits = await getHabits();
+
+      if (isActive) {
+        setHabits(loadedHabits);
+      }
+    };
+
+    loadHabits();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
-  const addHabit = (title) => {
+  const addHabit = async (title) => {
     const normalizedTitle = title.trim();
 
     if (!normalizedTitle) {
       return;
     }
 
-    const updatedHabits = addHabitInService({ title: normalizedTitle });
+    const updatedHabits = await addHabitInService({ title: normalizedTitle });
     setHabits(updatedHabits);
   };
 
-  const toggleHabitForToday = (id) => {
-    const updatedHabits = toggleHabitForTodayInService(id);
+  const toggleHabitForToday = async (id) => {
+    const updatedHabits = await toggleHabitForTodayInService(id);
     setHabits(updatedHabits);
   };
 
-  const deleteHabit = (id) => {
-    const updatedHabits = deleteHabitInService(id);
+  const deleteHabit = async (id) => {
+    const updatedHabits = await deleteHabitInService(id);
     setHabits(updatedHabits);
   };
 

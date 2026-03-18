@@ -16,7 +16,21 @@ const Focus = () => {
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
-    setSessions(getSessions());
+    let isActive = true;
+
+    const loadSessions = async () => {
+      const loadedSessions = await getSessions();
+
+      if (isActive) {
+        setSessions(loadedSessions);
+      }
+    };
+
+    loadSessions();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const { timeLeft, isRunning, startTimer, pauseTimer, resetTimer } = useFocusTimer({

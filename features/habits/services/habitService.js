@@ -1,84 +1,95 @@
-const HABITS_STORAGE_KEY = "lifeos.habits";
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { db } from "../../../core/firebase/firestore";
+import { getCurrentUser } from "../../auth/services/authService";
 
 const getTodayDate = () => {
   return new Date().toISOString().split("T")[0];
 };
 
-const readHabitsFromStorage = () => {
-  if (typeof window === "undefined") {
-    return [];
+const getHabitCollectionRef = () => {
+  const user = getCurrentUser();
+
+  if (!user) {
+    return null;
   }
 
-  const rawHabits = window.localStorage.getItem(HABITS_STORAGE_KEY);
-
-  if (!rawHabits) {
-    return [];
-  }
-
-  try {
-    const parsedHabits = JSON.parse(rawHabits);
-    return Array.isArray(parsedHabits) ? parsedHabits : [];
-  } catch {
-    return [];
-  }
+  return collection(db, "users", user.uid, "habits");
 };
 
-const writeHabitsToStorage = (habits) => {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  window.localStorage.setItem(HABITS_STORAGE_KEY, JSON.stringify(habits));
-};
-
-const createHabit = (habit) => ({
-  id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-  title: habit.title,
-  createdAt: new Date().toISOString(),
-  completedDates: [],
+const mapHabit = (habitDoc) => ({
+  id: habitDoc.id,
+  ...habitDoc.data(),
 });
 
-export const getHabits = () => {
-  return readHabitsFromStorage();
+export const getHabits = async () => {
+  const habitCollectionRef = getHabitCollectionRef();
+
+  if (!habitCollectionRef) {
+    return [];
+  }
+
+  const snapshot = await getDocs(habitCollectionRef);
+
+  return snapshot.docs
+    .map(mapHabit)
+    .sort((firstHabit, secondHabit) => (secondHabit.createdAt || "").localeCompare(firstHabit.createdAt || ""));
 };
 
-export const addHabit = (habit) => {
-  const newHabit = createHabit(habit);
-  const existingHabits = readHabitsFromStorage();
-  const updatedHabits = [newHabit, ...existingHabits];
+export const addHabit = async (habit) => {
+  const habitCollectionRef = getHabitCollectionRef();
 
-  writeHabitsToStorage(updatedHabits);
-  return updatedHabits;
-};
+  if (!habitCollectionRef) {
+    return [];
+  }
 
-export const toggleHabitForToday = (id) => {
-  const today = getTodayDate();
-  const existingHabits = readHabitsFromStorage();
-
-  const updatedHabits = existingHabits.map((habit) => {
-    if (habit.id !== id) {
-      return habit;
-    }
-
-    const completedDates = Array.isArray(habit.completedDates) ? habit.completedDates : [];
-    const hasCompletedToday = completedDates.includes(today);
-
-    return {
-      ...habit,
-      completedDates: hasCompletedToday
-        ? completedDates.filter((date) => date !== today)
-        : [...completedDates, today],
-    };
+  await addDoc(habitCollectionRef, {
+    title: habit.title,
+    createdAt: new Date().toISOString(),
+    completedDates: [],
   });
 
-  writeHabitsToStorage(updatedHabits);
-  return updatedHabits;
+  return getHabits();
 };
 
-export const deleteHabit = (id) => {
-  const existingHabits = readHabitsFromStorage();
-  const updatedHabits = existingHabits.filter((habit) => habit.id !== id);
+export const toggleHabitForToday = async (id) => {
+  const user = getCurrentUser();
 
-  writeHabitsToStorage(updatedHabits);
-  return updatedHabits;
+  if (!user) {
+    return [];
+  }
+
+  const today = getTodayDate();
+  const existingHabits = await getHabits();
+  const targetHabit = existingHabits.find((habit) => habit.id === id);
+
+  if (!targetHabit) {
+    return existingHabits;
+  }
+
+  const completedDates = Array.isArray(targetHabit.completedDates) ? targetHabit.completedDates : [];
+  const hasCompletedToday = completedDates.includes(today);
+  const nextCompletedDates = hasCompletedToday
+    ? completedDates.filter((date) => date !== today)
+    : [...completedDates, today];
+
+  const habitDocRef = doc(db, "users", user.uid, "habits", id);
+
+  await updateDoc(habitDocRef, {
+    completedDates: nextCompletedDates,
+  });
+
+  return getHabits();
+};
+
+export const deleteHabit = async (id) => {
+  const user = getCurrentUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const habitDocRef = doc(db, "users", user.uid, "habits", id);
+  await deleteDoc(habitDocRef);
+
+  return getHabits();
 };

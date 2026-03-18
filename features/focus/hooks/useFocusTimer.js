@@ -41,11 +41,11 @@ const useFocusTimer = ({ sessionMinutes = DEFAULT_SESSION_MINUTES, onSessionComp
 
           setIsRunning(false);
 
-          const result = addSession({ duration: sessionMinutes });
-
-          if (typeof onSessionComplete === "function") {
-            onSessionComplete(result.sessions, result.newSession);
-          }
+          addSession({ duration: sessionMinutes }).then((result) => {
+            if (typeof onSessionComplete === "function") {
+              onSessionComplete(result.sessions, result.newSession);
+            }
+          });
 
           return 0;
         }

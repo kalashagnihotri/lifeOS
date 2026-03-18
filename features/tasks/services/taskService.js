@@ -1,77 +1,84 @@
-const TASKS_STORAGE_KEY = "lifeos.tasks";
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import { db } from "../../../core/firebase/firestore";
+import { getCurrentUser } from "../../auth/services/authService";
 
-const readTasksFromStorage = () => {
-  if (typeof window === "undefined") {
-    return [];
+const getTaskCollectionRef = () => {
+  const user = getCurrentUser();
+
+  if (!user) {
+    return null;
   }
 
-  const rawTasks = window.localStorage.getItem(TASKS_STORAGE_KEY);
-
-  if (!rawTasks) {
-    return [];
-  }
-
-  try {
-    const parsedTasks = JSON.parse(rawTasks);
-
-    return Array.isArray(parsedTasks) ? parsedTasks : [];
-  } catch {
-    return [];
-  }
+  return collection(db, "users", user.uid, "tasks");
 };
 
-const writeTasksToStorage = (tasks) => {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  window.localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
-};
-
-const createTask = (task) => ({
-  id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-  title: task.title,
-  completed: false,
-  createdAt: new Date().toISOString(),
+const mapTask = (taskDoc) => ({
+  id: taskDoc.id,
+  ...taskDoc.data(),
 });
 
-export const getTasks = () => {
-  return readTasksFromStorage();
+export const getTasks = async () => {
+  const taskCollectionRef = getTaskCollectionRef();
+
+  if (!taskCollectionRef) {
+    return [];
+  }
+
+  const snapshot = await getDocs(taskCollectionRef);
+
+  return snapshot.docs
+    .map(mapTask)
+    .sort((firstTask, secondTask) => (secondTask.createdAt || "").localeCompare(firstTask.createdAt || ""));
 };
 
-export const addTask = (task) => {
-  const newTask = createTask(task);
-  const existingTasks = readTasksFromStorage();
-  const updatedTasks = [newTask, ...existingTasks];
+export const addTask = async (task) => {
+  const taskCollectionRef = getTaskCollectionRef();
 
-  writeTasksToStorage(updatedTasks);
+  if (!taskCollectionRef) {
+    return [];
+  }
 
-  return updatedTasks;
-};
-
-export const toggleTask = (id) => {
-  const existingTasks = readTasksFromStorage();
-  const updatedTasks = existingTasks.map((task) => {
-    if (task.id !== id) {
-      return task;
-    }
-
-    return {
-      ...task,
-      completed: !task.completed,
-    };
+  await addDoc(taskCollectionRef, {
+    title: task.title,
+    completed: false,
+    createdAt: new Date().toISOString(),
   });
 
-  writeTasksToStorage(updatedTasks);
-
-  return updatedTasks;
+  return getTasks();
 };
 
-export const deleteTask = (id) => {
-  const existingTasks = readTasksFromStorage();
-  const updatedTasks = existingTasks.filter((task) => task.id !== id);
+export const toggleTask = async (id) => {
+  const user = getCurrentUser();
 
-  writeTasksToStorage(updatedTasks);
+  if (!user) {
+    return [];
+  }
 
-  return updatedTasks;
+  const existingTasks = await getTasks();
+  const targetTask = existingTasks.find((task) => task.id === id);
+
+  if (!targetTask) {
+    return existingTasks;
+  }
+
+  const taskDocRef = doc(db, "users", user.uid, "tasks", id);
+
+  await updateDoc(taskDocRef, {
+    completed: !targetTask.completed,
+  });
+
+  return getTasks();
+};
+
+export const deleteTask = async (id) => {
+  const user = getCurrentUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const taskDocRef = doc(db, "users", user.uid, "tasks", id);
+  await deleteDoc(taskDocRef);
+
+  return getTasks();
 };
