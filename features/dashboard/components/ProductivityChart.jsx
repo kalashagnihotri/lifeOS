@@ -33,12 +33,95 @@ const getChartPlaceholderStyles = () => ({
   transition: "background-color 0.25s ease, border-color 0.25s ease",
 });
 
-const ProductivityChart = () => {
+const getChartBarsStyles = () => ({
+  display: "grid",
+  gridTemplateColumns: "repeat(7, minmax(0, 1fr))",
+  alignItems: "end",
+  gap: `${spacing.sm}px`,
+  minHeight: `${spacing.xxl * 6}px`,
+});
+
+const getChartBarWrapStyles = () => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: `${spacing.xs}px`,
+});
+
+const getChartBarStyles = ({ value, maxValue }) => {
+  const safeMaxValue = maxValue > 0 ? maxValue : 1;
+  const ratio = value / safeMaxValue;
+
+  return {
+    width: "100%",
+    minHeight: `${spacing.sm}px`,
+    height: `${Math.max(spacing.sm, ratio * spacing.xxl * 5)}px`,
+    borderRadius: spacing.xs,
+    backgroundColor: value > 0 ? colors.primary : colors.border,
+    transition: "height 0.25s ease, background-color 0.25s ease",
+  };
+};
+
+const getChartLabelStyles = () => ({
+  margin: 0,
+  color: colors.text.muted,
+  fontFamily: typography.fontFamily,
+  fontSize: typography.fontSizes.small,
+  fontWeight: typography.fontWeights.regular,
+});
+
+const getLast7DaysKeys = () => {
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - index));
+
+    return date.toISOString().split("T")[0];
+  });
+};
+
+const formatDayLabel = (dateKey) => {
+  return new Date(dateKey).toLocaleDateString(undefined, { weekday: "short" });
+};
+
+const ProductivityChart = ({ sessions = [] }) => {
+  const last7Days = getLast7DaysKeys();
+  const sessionsByDay = sessions.reduce((accumulator, session) => {
+    const dayKey = (session.completedAt || "").split("T")[0];
+
+    if (!dayKey) {
+      return accumulator;
+    }
+
+    return {
+      ...accumulator,
+      [dayKey]: (accumulator[dayKey] || 0) + (Number(session.duration) || 0),
+    };
+  }, {});
+
+  const dataPoints = last7Days.map((dayKey) => ({
+    dayKey,
+    label: formatDayLabel(dayKey),
+    value: sessionsByDay[dayKey] || 0,
+  }));
+
+  const maxValue = Math.max(...dataPoints.map((point) => point.value), 0);
+
   return (
     <Card padding="lg" elevation={1}>
       <div style={getChartContainerStyles()}>
         <h3 style={getChartTitleStyles()}>Productivity Chart</h3>
-        <div style={getChartPlaceholderStyles()}>Chart placeholder</div>
+        {!sessions.length ? (
+          <div style={getChartPlaceholderStyles()}>No focus sessions logged yet.</div>
+        ) : (
+          <div style={getChartBarsStyles()}>
+            {dataPoints.map((point) => (
+              <div key={point.dayKey} style={getChartBarWrapStyles()}>
+                <div style={getChartBarStyles({ value: point.value, maxValue })} />
+                <p style={getChartLabelStyles()}>{point.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </Card>
   );

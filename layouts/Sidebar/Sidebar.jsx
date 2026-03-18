@@ -9,17 +9,15 @@ import {
 } from "./sidebar.styles";
 
 const menuItems = [
-  "Dashboard",
-  "Tasks",
-  "Habits",
-  "Focus",
-  "Notes",
-  "Mood",
-  "Analytics",
+  { label: "Dashboard", route: "#/dashboard" },
+  { label: "Tasks", route: "#/tasks" },
+  { label: "Habits", route: "#/habits" },
+  { label: "Focus", route: "#/focus" },
+  { label: "Insights", route: "#/insights" },
 ];
 
 const Sidebar = ({ isCompact = false }) => {
-  const [activeItem, setActiveItem] = useState("Dashboard");
+  const [activeRoute, setActiveRoute] = useState(window.location.hash || "#/dashboard");
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -29,11 +27,24 @@ const Sidebar = ({ isCompact = false }) => {
     }
   }, [isCompact]);
 
+  useEffect(() => {
+    const handleHashChange = () => {
+      setActiveRoute(window.location.hash || "#/dashboard");
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
+
   const showLabels = !isCompact || isExpanded;
 
-  const handleItemClick = (item) => {
-    setActiveItem(item);
-    console.log(`Navigate to ${item}`);
+  const handleItemClick = (route) => {
+    if (window.location.hash !== route) {
+      window.location.hash = route;
+    }
   };
 
   return (
@@ -53,19 +64,19 @@ const Sidebar = ({ isCompact = false }) => {
       <nav>
         <ul style={getSidebarListStyles({ showLabels })}>
           {menuItems.map((item) => (
-            <li key={item}>
+            <li key={item.route}>
               <button
                 type="button"
-                onClick={() => handleItemClick(item)}
-                onMouseEnter={() => setHoveredItem(item)}
+                onClick={() => handleItemClick(item.route)}
+                onMouseEnter={() => setHoveredItem(item.route)}
                 onMouseLeave={() => setHoveredItem(null)}
                 style={getSidebarItemStyles({
-                  isActive: activeItem === item,
-                  isHovered: hoveredItem === item,
+                  isActive: activeRoute === item.route,
+                  isHovered: hoveredItem === item.route,
                   showLabels,
                 })}
               >
-                {showLabels ? item : item[0]}
+                {showLabels ? item.label : item.label[0]}
               </button>
             </li>
           ))}

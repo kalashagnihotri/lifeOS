@@ -4,14 +4,6 @@ import theme from "../../../core/theme";
 const colors = theme.colors.light;
 const { spacing, typography } = theme;
 
-const tasks = [
-  { id: 1, title: "Plan top priorities", status: "completed" },
-  { id: 2, title: "Review habit progress", status: "pending" },
-  { id: 3, title: "Prepare focus session", status: "completed" },
-  { id: 4, title: "Write quick reflection", status: "pending" },
-  { id: 5, title: "Organize notes", status: "pending" },
-];
-
 const getTaskSummaryContainerStyles = () => ({
   display: "flex",
   flexDirection: "column",
@@ -66,31 +58,51 @@ const getTaskStatusStyles = ({ isCompleted }) => ({
   letterSpacing: "0.02em",
 });
 
-const TaskSummary = () => {
+const getEmptyStyles = () => ({
+  margin: 0,
+  border: `1px dashed ${colors.border}`,
+  borderRadius: spacing.sm,
+  padding: `${spacing.lg}px`,
+  color: colors.text.muted,
+  fontFamily: typography.fontFamily,
+  fontSize: typography.fontSizes.medium,
+  fontWeight: typography.fontWeights.regular,
+  textAlign: "center",
+});
+
+const TaskSummary = ({ tasks = [] }) => {
+  const recentTasks = tasks.slice(0, 5);
+
   return (
     <Card padding="lg" elevation={1}>
       <div style={getTaskSummaryContainerStyles()}>
         <h3 style={getTaskSummaryTitleStyles()}>Task Summary</h3>
-        <ul style={getTaskListStyles()}>
-          {tasks.map((task) => {
-            const isCompleted = task.status === "completed";
+        {!recentTasks.length ? (
+          <p style={getEmptyStyles()}>No tasks available yet.</p>
+        ) : (
+          <ul style={getTaskListStyles()}>
+            {recentTasks.map((task) => {
+              const isCompleted = Boolean(task.completed);
 
-            return (
-              <li key={task.id} style={getTaskItemStyles()}>
-                <p
-                  style={{
-                    ...getTaskTitleStyles(),
-                    textDecoration: isCompleted ? "line-through" : "none",
-                    opacity: isCompleted ? 0.72 : 1,
-                  }}
-                >
-                  {task.title}
-                </p>
-                <p style={getTaskStatusStyles({ isCompleted })}>{task.status}</p>
-              </li>
-            );
-          })}
-        </ul>
+              return (
+                <li key={task.id} style={getTaskItemStyles()}>
+                  <p
+                    style={{
+                      ...getTaskTitleStyles(),
+                      textDecoration: isCompleted ? "line-through" : "none",
+                      opacity: isCompleted ? 0.72 : 1,
+                    }}
+                  >
+                    {task.title}
+                  </p>
+                  <p style={getTaskStatusStyles({ isCompleted })}>
+                    {isCompleted ? "completed" : "pending"}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
     </Card>
   );

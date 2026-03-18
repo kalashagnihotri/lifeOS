@@ -6,13 +6,13 @@ import { generateInsights } from "../services/insightService";
 
 const getMoodSnapshot = () => {
   if (typeof window === "undefined") {
-    return { label: "steady", score: 3 };
+    return null;
   }
 
   const rawMood = window.localStorage.getItem("lifeos.mood.latest");
 
   if (!rawMood) {
-    return { label: "steady", score: 3 };
+    return null;
   }
 
   try {
@@ -23,7 +23,7 @@ const getMoodSnapshot = () => {
       score: Number(parsedMood.score) || 3,
     };
   } catch {
-    return { label: "steady", score: 3 };
+    return null;
   }
 };
 

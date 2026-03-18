@@ -77,24 +77,26 @@ export const generateInsights = ({ tasks, habits, sessions, mood }) => {
     );
   }
 
-  if (mood?.score >= 4) {
-    insights.push(
-      createInsight(
-        insights.length + 1,
-        "Mood Stability",
-        `Recent mood trend is positive (${mood.label}). This usually supports better productivity.`,
-        "positive"
-      )
-    );
-  } else {
-    insights.push(
-      createInsight(
-        insights.length + 1,
-        "Energy Management Suggestion",
-        `Mood trend appears ${mood?.label || "mixed"}. Add lighter tasks during low-energy windows.`,
-        "suggestion"
-      )
-    );
+  if (mood && typeof mood.score === "number") {
+    if (mood.score >= 4) {
+      insights.push(
+        createInsight(
+          insights.length + 1,
+          "Mood Stability",
+          `Recent mood trend is positive (${mood.label || "good"}). This usually supports better productivity.`,
+          "positive"
+        )
+      );
+    } else {
+      insights.push(
+        createInsight(
+          insights.length + 1,
+          "Energy Management Suggestion",
+          `Mood trend appears ${mood.label || "mixed"}. Add lighter tasks during low-energy windows.`,
+          "suggestion"
+        )
+      );
+    }
   }
 
   insights.push(

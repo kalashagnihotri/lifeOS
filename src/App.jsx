@@ -33,11 +33,16 @@ function App() {
   const { user, login, logout } = useAuth();
 
   useEffect(() => {
-    if (!window.location.hash) {
+    if (!window.location.hash || !PAGE_BY_HASH[window.location.hash]) {
       window.location.hash = "#/dashboard";
     }
 
     const handleHashChange = () => {
+      if (!PAGE_BY_HASH[window.location.hash]) {
+        window.location.hash = "#/dashboard";
+        return;
+      }
+
       setCurrentPage(() => resolvePageFromHash(window.location.hash));
     };
 
