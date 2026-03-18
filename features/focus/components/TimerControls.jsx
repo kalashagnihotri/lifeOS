@@ -11,6 +11,7 @@ import {
 
 const modes = [
   { id: "focus", label: "Focus 25" },
+  { id: "focusQuick", label: "Focus 1" },
   { id: "shortBreak", label: "Short 5" },
   { id: "longBreak", label: "Long 15" },
 ];

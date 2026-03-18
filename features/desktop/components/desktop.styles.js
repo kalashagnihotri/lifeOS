@@ -37,6 +37,8 @@ export const getAppIconPositionStyles = ({ x = 0, y = 0, isDragging = false }) =
 });
 
 export const getAppIconButtonStyles = ({ isHovered = false }) => ({
+  width: "92px",
+  minHeight: "84px",
   border: `1px solid ${isHovered ? "rgba(255, 255, 255, 0.26)" : "rgba(255, 255, 255, 0.14)"}`,
   borderRadius: spacing.md,
   backgroundColor: isHovered ? "rgba(20, 20, 30, 0.78)" : "rgba(20, 20, 30, 0.66)",

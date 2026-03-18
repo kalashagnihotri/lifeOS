@@ -14,8 +14,8 @@ import {
 } from "./desktop.styles";
 import { useEffect, useState } from "react";
 
-const ICON_WIDTH = 96;
-const ICON_HEIGHT = 96;
+const ICON_WIDTH = 92;
+const ICON_HEIGHT = 84;
 const ICON_MARGIN_LEFT = 28;
 const ICON_MARGIN_TOP = 34;
 const ICON_GAP = 12;

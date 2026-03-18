@@ -5,10 +5,13 @@ import { notify } from "../../../shared/utils/notify";
 
 const POMODORO_MINUTES = {
   focus: 25,
+  focusQuick: 1,
   shortBreak: 5,
   longBreak: 15,
 };
 const SESSIONS_PER_LONG_BREAK = 4;
+
+const isFocusMode = (mode) => mode === "focus" || mode === "focusQuick";
 
 const calculateBreakMinutes = (sessionsCount) => {
   if (sessionsCount <= 1) {
@@ -61,8 +64,8 @@ const useFocusTimer = ({ onSessionComplete } = {}) => {
       setIsRunning(false);
       const hasAutoPlan = Boolean(autoPlan?.isEnabled);
 
-      if (currentMode === "focus") {
-        const focusMinutes = POMODORO_MINUTES.focus;
+      if (isFocusMode(currentMode)) {
+        const focusMinutes = POMODORO_MINUTES[currentMode] || POMODORO_MINUTES.focus;
 
         addSession({ duration: focusMinutes })
           .then((result) => {
@@ -217,6 +220,7 @@ const useFocusTimer = ({ onSessionComplete } = {}) => {
 
   return {
     timeLeft,
+    totalTime: totalSeconds,
     isRunning,
     currentMode,
     completedFocusSessions,

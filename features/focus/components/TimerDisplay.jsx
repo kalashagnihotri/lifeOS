@@ -8,11 +8,18 @@ import {
 
 const modeLabelById = {
   focus: "Focus Session",
+  focusQuick: "Focus Session (1 min)",
   shortBreak: "Short Break",
   longBreak: "Long Break",
 };
 
-const TimerDisplay = ({ timeLeft, isRunning, currentMode, completedFocusSessions, autoPlan }) => {
+const TimerDisplay = ({
+  timeLeft,
+  isRunning,
+  currentMode,
+  completedFocusSessions,
+  autoPlan,
+}) => {
   const modeLabel = modeLabelById[currentMode] || "Pomodoro";
   const autoPlanMeta = autoPlan?.isEnabled
     ? `Plan progress: ${Math.min(completedFocusSessions, autoPlan.targetSessions)}/${autoPlan.targetSessions}`
