@@ -1,6 +1,6 @@
 import theme from "../../../core/theme";
 
-const colors = theme.colors.light;
+const colors = theme.colors.dark;
 const { spacing, typography } = theme;
 
 export const getStatCardContainerStyles = () => ({
@@ -21,12 +21,13 @@ export const getStatCardTitleStyles = () => ({
 
 export const getStatCardValueStyles = () => ({
   margin: 0,
-  color: colors.text.primary,
+  color: colors.primary,
   fontFamily: typography.fontFamily,
   fontSize: `clamp(${typography.fontSizes.xl}px, 3.5vw, ${typography.fontSizes.heading}px)`,
   fontWeight: typography.fontWeights.bold,
   lineHeight: 1,
   letterSpacing: "0.01em",
+  textShadow: "0 0 18px rgba(167, 176, 255, 0.22)",
 });
 
 export const getStatCardDescriptionStyles = () => ({

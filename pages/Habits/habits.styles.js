@@ -11,6 +11,7 @@ export const getHabitsPageStyles = () => ({
   minWidth: 0,
   padding: `clamp(${spacing.md}px, 3vw, ${spacing.xl}px)`,
   backgroundColor: colors.background,
+  animation: "lifeosPageFade 320ms ease",
 });
 
 export const getHabitsHeaderStyles = () => ({

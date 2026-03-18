@@ -8,9 +8,10 @@ export const getHabitSectionStyles = () => ({
   flexDirection: "column",
   gap: `${spacing.lg}px`,
   border: `1px solid ${colors.border}`,
-  borderRadius: spacing.md,
-  backgroundColor: colors.surface,
+  borderRadius: spacing.lg,
+  background: `linear-gradient(170deg, rgba(23, 28, 40, 0.94) 0%, rgba(15, 17, 23, 0.92) 100%)`,
   padding: `clamp(${spacing.md}px, 2vw, ${spacing.xl}px)`,
+  boxShadow: "0 14px 28px rgba(8, 10, 15, 0.36)",
   transition: "border-color 0.25s ease, box-shadow 0.25s ease",
 });
 
@@ -33,7 +34,7 @@ export const getHabitInputStyles = ({ isFocused = false }) => ({
   flex: 1,
   minWidth: `${spacing.xxl * 5}px`,
   border: `1px solid ${colors.border}`,
-  borderRadius: spacing.sm,
+  borderRadius: spacing.md,
   backgroundColor: isFocused ? colors.surface : colors.background,
   color: colors.text.primary,
   padding: `${spacing.sm}px ${spacing.md}px`,
@@ -48,7 +49,7 @@ export const getHabitInputStyles = ({ isFocused = false }) => ({
 
 export const getHabitAddButtonStyles = ({ isHovered = false, isPressed = false }) => ({
   border: `1px solid ${colors.primary}`,
-  borderRadius: spacing.sm,
+  borderRadius: spacing.md,
   backgroundColor: isHovered ? colors.secondary : colors.primary,
   color: colors.background,
   padding: `${spacing.sm}px ${spacing.lg}px`,
@@ -57,8 +58,9 @@ export const getHabitAddButtonStyles = ({ isHovered = false, isPressed = false }
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.medium,
   fontWeight: typography.fontWeights.medium,
-  transform: isPressed ? "scale(0.98)" : isHovered ? "translateY(-1px)" : "none",
-  transition: "background-color 0.25s ease, transform 0.2s ease",
+  boxShadow: "0 10px 22px rgba(125, 184, 163, 0.24)",
+  transform: isPressed ? "translateY(0) scale(0.98)" : isHovered ? "translateY(-1px) scale(1.02)" : "none",
+  transition: "background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease",
 });
 
 export const getHabitListStyles = () => ({
@@ -81,13 +83,15 @@ export const getHabitItemStyles = ({
   justifyContent: "space-between",
   gap: `${spacing.md}px`,
   border: `1px solid ${completedToday ? colors.success : colors.border}`,
-  borderRadius: spacing.sm,
-  backgroundColor: isHovered ? colors.background : colors.surface,
+  borderRadius: spacing.md,
+  backgroundColor: isHovered ? "rgba(23, 28, 40, 0.96)" : "rgba(23, 28, 40, 0.82)",
   padding: `${spacing.sm}px ${spacing.md}px`,
   opacity: isRemoving ? 0 : isMounted ? 1 : 0,
   transform: isRemoving ? "translateX(10px) scale(0.98)" : isMounted ? "translateX(0)" : "translateX(-8px)",
+  animation: isMounted && !isRemoving ? "lifeosFadeSlideUp 320ms ease" : "none",
+  boxShadow: isHovered ? "0 12px 22px rgba(8, 10, 15, 0.34)" : "none",
   transition:
-    "background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease, transform 0.25s ease",
+    "background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
 });
 
 export const getHabitLeftContentStyles = () => ({
@@ -114,10 +118,10 @@ export const getStreakBadgeStyles = ({ streak = 0 }) => ({
   display: "inline-flex",
   alignItems: "center",
   gap: `${spacing.xs}px`,
-  borderRadius: spacing.sm,
+  borderRadius: spacing.md,
   border: `1px solid ${streak > 0 ? colors.warning : colors.border}`,
-  backgroundColor: streak > 0 ? colors.warning : colors.background,
-  color: streak > 0 ? colors.background : colors.text.muted,
+  backgroundColor: streak > 0 ? "rgba(199, 165, 124, 0.2)" : colors.background,
+  color: streak > 0 ? colors.warning : colors.text.muted,
   padding: `${spacing.xs}px ${spacing.sm}px`,
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.small,

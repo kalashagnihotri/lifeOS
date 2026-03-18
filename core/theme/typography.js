@@ -1,11 +1,11 @@
 const typography = {
-  fontFamily: "'Poppins', 'Segoe UI', sans-serif",
+  fontFamily: "'Manrope', 'Poppins', 'Segoe UI', sans-serif",
   fontSizes: {
     small: 12,
-    medium: 14,
-    large: 16,
-    xl: 20,
-    heading: 28,
+    medium: 15,
+    large: 17,
+    xl: 22,
+    heading: 32,
   },
   fontWeights: {
     regular: 400,

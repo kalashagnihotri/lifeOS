@@ -12,6 +12,7 @@ export const getInsightsPageStyles = () => ({
   gap: `clamp(${spacing.md}px, 2vw, ${spacing.xl}px)`,
   padding: `clamp(${spacing.md}px, 3vw, ${spacing.xl}px)`,
   boxSizing: "border-box",
+  animation: "lifeosPageFade 320ms ease",
 });
 
 export const getInsightsHeaderStyles = () => ({

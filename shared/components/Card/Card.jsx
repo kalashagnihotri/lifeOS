@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getCardStyles } from "./card.styles";
 
-const Card = ({ children, padding = "md", elevation = 0, scheme = "light" }) => {
+const Card = ({ children, padding = "md", elevation = 0, scheme = "dark" }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (

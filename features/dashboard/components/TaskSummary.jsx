@@ -1,7 +1,7 @@
 import Card from "../../../shared/components/Card/Card";
 import theme from "../../../core/theme";
 
-const colors = theme.colors.light;
+const colors = theme.colors.dark;
 const { spacing, typography } = theme;
 
 const getTaskSummaryContainerStyles = () => ({
@@ -36,6 +36,7 @@ const getTaskItemStyles = () => ({
   border: `1px solid ${colors.border}`,
   borderRadius: spacing.sm,
   backgroundColor: colors.background,
+  boxShadow: "0 8px 18px rgba(8, 10, 15, 0.3)",
   transition: "transform 0.2s ease, border-color 0.25s ease, background-color 0.25s ease",
 });
 

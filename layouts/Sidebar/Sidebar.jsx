@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
+import { Brain, CheckSquare, Flame, LayoutDashboard, Timer } from "lucide-react";
 import {
+  getSidebarItemContentStyles,
+  getSidebarIconWrapStyles,
+  getSidebarLabelStyles,
+  getSidebarSectionLabelStyles,
   getSidebarBrandStyles,
   getSidebarHeaderStyles,
   getSidebarStyles,
@@ -9,23 +14,18 @@ import {
 } from "./sidebar.styles";
 
 const menuItems = [
-  { label: "Dashboard", route: "#/dashboard" },
-  { label: "Tasks", route: "#/tasks" },
-  { label: "Habits", route: "#/habits" },
-  { label: "Focus", route: "#/focus" },
-  { label: "Insights", route: "#/insights" },
+  { label: "Dashboard", route: "#/dashboard", icon: LayoutDashboard },
+  { label: "Tasks", route: "#/tasks", icon: CheckSquare },
+  { label: "Habits", route: "#/habits", icon: Flame },
+  { label: "Focus", route: "#/focus", icon: Timer },
+  { label: "Insights", route: "#/insights", icon: Brain },
 ];
 
 const Sidebar = ({ isCompact = false }) => {
   const [activeRoute, setActiveRoute] = useState(window.location.hash || "#/dashboard");
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [pressedItem, setPressedItem] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
-
-  useEffect(() => {
-    if (!isCompact) {
-      setIsExpanded(false);
-    }
-  }, [isCompact]);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -43,7 +43,7 @@ const Sidebar = ({ isCompact = false }) => {
 
   const handleItemClick = (route) => {
     if (window.location.hash !== route) {
-      window.location.hash = route;
+      window.location.assign(route);
     }
   };
 
@@ -62,6 +62,7 @@ const Sidebar = ({ isCompact = false }) => {
         ) : null}
       </div>
       <nav>
+        {showLabels ? <p style={getSidebarSectionLabelStyles()}>Workspace</p> : null}
         <ul style={getSidebarListStyles({ showLabels })}>
           {menuItems.map((item) => (
             <li key={item.route}>
@@ -70,13 +71,27 @@ const Sidebar = ({ isCompact = false }) => {
                 onClick={() => handleItemClick(item.route)}
                 onMouseEnter={() => setHoveredItem(item.route)}
                 onMouseLeave={() => setHoveredItem(null)}
+                onMouseDown={() => setPressedItem(item.route)}
+                onMouseUp={() => setPressedItem(null)}
+                onBlur={() => setPressedItem(null)}
                 style={getSidebarItemStyles({
                   isActive: activeRoute === item.route,
                   isHovered: hoveredItem === item.route,
+                  isPressed: pressedItem === item.route,
                   showLabels,
                 })}
               >
-                {showLabels ? item.label : item.label[0]}
+                <span style={getSidebarItemContentStyles({ showLabels })}>
+                  <span
+                    style={getSidebarIconWrapStyles({
+                      isActive: activeRoute === item.route,
+                      isHovered: hoveredItem === item.route,
+                    })}
+                  >
+                    <item.icon size={16} strokeWidth={2.2} />
+                  </span>
+                  {showLabels ? <span style={getSidebarLabelStyles()}>{item.label}</span> : null}
+                </span>
               </button>
             </li>
           ))}

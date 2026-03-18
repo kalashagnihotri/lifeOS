@@ -1,7 +1,16 @@
 import theme from "../../../core/theme";
 
-const colors = theme.colors.light;
+const colors = theme.colors.dark;
 const { spacing, typography } = theme;
+
+const hexToRgba = (hex, alpha) => {
+  const normalized = hex.replace("#", "");
+  const r = Number.parseInt(normalized.slice(0, 2), 16);
+  const g = Number.parseInt(normalized.slice(2, 4), 16);
+  const b = Number.parseInt(normalized.slice(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
 
 export const getInputWrapperStyles = () => ({
   display: "flex",
@@ -31,17 +40,18 @@ export const getInputStyles = ({
 
   return {
     width: "100%",
-    backgroundColor: colors.surface,
+    backgroundColor: isFocused ? hexToRgba(colors.surface, 0.95) : hexToRgba(colors.surface, 0.82),
     color: colors.text.primary,
     border: `1px solid ${borderColor}`,
-    borderRadius: 6,
+    borderRadius: spacing.md,
     padding: `${spacing.sm}px ${spacing.md}px`,
     outline: "none",
-    boxShadow: isFocused ? `0 0 0 ${spacing.xs}px ${colors.secondary}` : "none",
+    boxShadow: isFocused ? `0 0 0 ${spacing.xs}px ${hexToRgba(colors.secondary, 0.45)}` : "none",
     fontFamily: typography.fontFamily,
     fontSize: typography.fontSizes.medium,
     fontWeight: typography.fontWeights.regular,
-    transition: "border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
+    backdropFilter: "blur(8px)",
+    transition: "border-color 0.28s ease, box-shadow 0.28s ease, background-color 0.28s ease",
   };
 };
 

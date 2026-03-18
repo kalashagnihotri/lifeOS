@@ -12,8 +12,13 @@ const InsightList = ({ insights, isLoading = false }) => {
 
   return (
     <ul style={getInsightListStyles()}>
-      {insights.map((insight) => (
-        <li key={insight.id}>
+      {insights.map((insight, index) => (
+        <li
+          key={insight.id}
+          style={{
+            animation: `lifeosFadeSlideUp 360ms ease ${index * 70}ms both`,
+          }}
+        >
           <InsightCard
             title={insight.title}
             description={insight.description}

@@ -1,7 +1,16 @@
 import theme from "../../core/theme";
 
-const colors = theme.colors.light;
+const colors = theme.colors.dark;
 const { spacing, typography } = theme;
+
+const hexToRgba = (hex, alpha) => {
+  const normalized = hex.replace("#", "");
+  const r = Number.parseInt(normalized.slice(0, 2), 16);
+  const g = Number.parseInt(normalized.slice(2, 4), 16);
+  const b = Number.parseInt(normalized.slice(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
 
 export const getDashboardPageStyles = () => ({
   display: "flex",
@@ -9,6 +18,7 @@ export const getDashboardPageStyles = () => ({
   gap: `clamp(${spacing.md}px, 2vw, ${spacing.xl}px)`,
   minWidth: 0,
   width: "100%",
+  animation: "lifeosPageFade 320ms ease",
 });
 
 export const getDashboardSectionStyles = () => ({
@@ -16,12 +26,14 @@ export const getDashboardSectionStyles = () => ({
   flexDirection: "column",
   gap: `${spacing.md}px`,
   minWidth: 0,
-  backgroundColor: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: spacing.md,
+  background: `linear-gradient(165deg, ${hexToRgba(colors.surface, 0.94)} 0%, ${hexToRgba(colors.background, 0.84)} 100%)`,
+  border: `1px solid ${hexToRgba(colors.border, 0.92)}`,
+  borderRadius: spacing.lg,
   padding: `clamp(${spacing.md}px, 2vw, ${spacing.xl}px)`,
   boxSizing: "border-box",
-  transition: "border-color 0.25s ease, box-shadow 0.25s ease",
+  boxShadow: `0 14px 28px ${hexToRgba(colors.background, 0.4)}`,
+  backdropFilter: "blur(10px)",
+  transition: "border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease",
 });
 
 export const getDashboardTitleStyles = () => ({

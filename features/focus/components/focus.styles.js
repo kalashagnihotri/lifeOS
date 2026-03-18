@@ -5,15 +5,18 @@ const { spacing, typography } = theme;
 
 export const getTimerCardStyles = ({ isRunning = false }) => ({
   border: `1px solid ${colors.border}`,
-  borderRadius: spacing.lg,
-  backgroundColor: colors.surface,
-  padding: `${spacing.xxl}px ${spacing.xl}px`,
+  borderRadius: spacing.xxl,
+  background: "linear-gradient(180deg, rgba(23, 28, 40, 0.96) 0%, rgba(15, 17, 23, 0.92) 100%)",
+  padding: `${spacing.xxl + spacing.md}px ${spacing.xxl}px`,
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   gap: `${spacing.lg}px`,
   transform: isRunning ? "scale(1.01)" : "none",
-  boxShadow: isRunning ? `0 0 0 ${spacing.xs}px ${colors.primary}` : "none",
+  boxShadow: isRunning
+    ? "0 0 0 1px rgba(167, 176, 255, 0.48), 0 18px 34px rgba(8, 10, 15, 0.5)"
+    : "0 14px 28px rgba(8, 10, 15, 0.42)",
+  animation: isRunning ? "lifeosPulseSoft 1.8s infinite" : "none",
   transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
 });
 
@@ -30,11 +33,12 @@ export const getTimerLabelStyles = () => ({
 export const getTimerDisplayStyles = ({ isRunning = false }) => ({
   margin: 0,
   color: isRunning ? colors.primary : colors.text.primary,
-  fontFamily: typography.fontFamily,
-  fontSize: `clamp(${typography.fontSizes.heading}px, 8vw, ${spacing.xxl * 2}px)`,
+  fontFamily: "'Space Grotesk', 'Manrope', sans-serif",
+  fontSize: `clamp(${typography.fontSizes.heading + 4}px, 10vw, ${spacing.xxl * 3}px)`,
   fontWeight: typography.fontWeights.bold,
   lineHeight: 1,
-  letterSpacing: "0.04em",
+  letterSpacing: "0.06em",
+  textShadow: isRunning ? "0 0 24px rgba(167, 176, 255, 0.3)" : "none",
   transition: "color 0.25s ease, transform 0.25s ease",
 });
 
@@ -48,12 +52,13 @@ export const getTimerControlsStyles = () => ({
 
 export const getSessionSectionStyles = () => ({
   border: `1px solid ${colors.border}`,
-  borderRadius: spacing.md,
-  backgroundColor: colors.surface,
+  borderRadius: spacing.lg,
+  background: "linear-gradient(170deg, rgba(23, 28, 40, 0.94) 0%, rgba(15, 17, 23, 0.9) 100%)",
   padding: `${spacing.lg}px`,
   display: "flex",
   flexDirection: "column",
   gap: `${spacing.md}px`,
+  boxShadow: "0 12px 24px rgba(8, 10, 15, 0.35)",
   transition: "border-color 0.25s ease",
 });
 
@@ -80,10 +85,11 @@ export const getSessionItemStyles = () => ({
   justifyContent: "space-between",
   gap: `${spacing.md}px`,
   border: `1px solid ${colors.border}`,
-  borderRadius: spacing.sm,
+  borderRadius: spacing.md,
   padding: `${spacing.sm}px ${spacing.md}px`,
-  backgroundColor: colors.background,
-  transition: "background-color 0.25s ease, transform 0.2s ease",
+  backgroundColor: "rgba(15, 17, 23, 0.9)",
+  animation: "lifeosFadeSlideUp 320ms ease",
+  transition: "background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease",
 });
 
 export const getSessionDurationStyles = () => ({

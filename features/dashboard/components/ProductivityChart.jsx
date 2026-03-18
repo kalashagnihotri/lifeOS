@@ -1,7 +1,7 @@
 import Card from "../../../shared/components/Card/Card";
 import theme from "../../../core/theme";
 
-const colors = theme.colors.light;
+const colors = theme.colors.dark;
 const { spacing, typography } = theme;
 
 const getChartContainerStyles = () => ({
@@ -56,8 +56,9 @@ const getChartBarStyles = ({ value, maxValue }) => {
     width: "100%",
     minHeight: `${spacing.sm}px`,
     height: `${Math.max(spacing.sm, ratio * spacing.xxl * 5)}px`,
-    borderRadius: spacing.xs,
-    backgroundColor: value > 0 ? colors.primary : colors.border,
+    borderRadius: spacing.sm,
+    background: value > 0 ? `linear-gradient(180deg, ${colors.secondary} 0%, ${colors.primary} 100%)` : colors.border,
+    boxShadow: value > 0 ? "0 8px 16px rgba(133, 207, 232, 0.2)" : "none",
     transition: "height 0.25s ease, background-color 0.25s ease",
   };
 };

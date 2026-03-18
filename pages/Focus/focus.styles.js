@@ -6,13 +6,15 @@ const { spacing, typography } = theme;
 export const getFocusPageStyles = () => ({
   minHeight: "100%",
   width: "100%",
-  backgroundColor: colors.background,
+  background:
+    "radial-gradient(circle at 50% 10%, rgba(167, 176, 255, 0.12) 0%, rgba(15, 17, 23, 0) 42%), #0f1117",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   gap: `clamp(${spacing.md}px, 2vw, ${spacing.xl}px)`,
   padding: `clamp(${spacing.md}px, 3vw, ${spacing.xl}px)`,
   boxSizing: "border-box",
+  animation: "lifeosPageFade 320ms ease",
 });
 
 export const getFocusHeaderStyles = () => ({

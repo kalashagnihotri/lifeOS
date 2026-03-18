@@ -29,6 +29,31 @@ export const getInsightCardShellStyles = ({ type, isHovered = false }) => ({
   transition: "transform 0.25s ease, border-color 0.25s ease",
 });
 
+export const getInsightTopRowStyles = () => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: `${spacing.sm}px`,
+});
+
+export const getInsightTypeBadgeStyles = ({ type }) => ({
+  margin: 0,
+  color: accentByType[type] || colors.primary,
+  fontFamily: typography.fontFamily,
+  fontSize: typography.fontSizes.small,
+  fontWeight: typography.fontWeights.medium,
+  textTransform: "capitalize",
+  borderRadius: spacing.sm,
+  border: `1px solid ${accentByType[type] || colors.primary}`,
+  backgroundColor: "rgba(141, 151, 184, 0.08)",
+  padding: `${spacing.xs}px ${spacing.sm}px`,
+});
+
+export const getInsightIconStyles = ({ type }) => ({
+  color: accentByType[type] || colors.primary,
+  opacity: 0.9,
+});
+
 export const getInsightTitleStyles = () => ({
   margin: 0,
   color: colors.text.primary,
@@ -43,16 +68,7 @@ export const getInsightDescriptionStyles = () => ({
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.medium,
   fontWeight: typography.fontWeights.regular,
-  lineHeight: 1.5,
-});
-
-export const getInsightTypeStyles = ({ type }) => ({
-  margin: 0,
-  color: accentByType[type] || colors.primary,
-  fontFamily: typography.fontFamily,
-  fontSize: typography.fontSizes.small,
-  fontWeight: typography.fontWeights.medium,
-  textTransform: "capitalize",
+  lineHeight: 1.65,
 });
 
 export const getEmptyStateStyles = () => ({

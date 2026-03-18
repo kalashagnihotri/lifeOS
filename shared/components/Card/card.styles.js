@@ -4,7 +4,7 @@ const colorsByScheme = {
   light: theme.colors.light,
   dark: theme.colors.dark,
 };
-const defaultColors = colorsByScheme.light;
+const defaultColors = colorsByScheme.dark;
 const { spacing } = theme;
 
 const hexToRgba = (hex, alpha) => {
@@ -18,9 +18,9 @@ const hexToRgba = (hex, alpha) => {
 
 const elevationShadows = {
   0: "none",
-  1: `0 1px 3px ${hexToRgba(defaultColors.text.primary, 0.08)}`,
-  2: `0 4px 8px ${hexToRgba(defaultColors.text.primary, 0.12)}`,
-  3: `0 8px 16px ${hexToRgba(defaultColors.text.primary, 0.16)}`,
+  1: `0 10px 22px ${hexToRgba(defaultColors.background, 0.4)}`,
+  2: `0 14px 30px ${hexToRgba(defaultColors.background, 0.48)}`,
+  3: `0 20px 36px ${hexToRgba(defaultColors.background, 0.56)}`,
 };
 
 export const getCardStyles = ({
@@ -36,19 +36,20 @@ export const getCardStyles = ({
       : hexToRgba(selectedColors.text.primary, 0.18);
   const dynamicShadows = {
     ...elevationShadows,
-    1: `0 2px 6px ${shadowTint}`,
-    2: `0 8px 18px ${shadowTint}`,
-    3: `0 12px 24px ${shadowTint}`,
+    1: `0 12px 24px ${shadowTint}`,
+    2: `0 16px 30px ${shadowTint}`,
+    3: `0 22px 40px ${shadowTint}`,
   };
   const paddingValue = typeof padding === "number" ? padding : spacing[padding] || spacing.md;
 
   return {
-    backgroundColor: selectedColors.surface,
-    border: `1px solid ${selectedColors.border}`,
-    borderRadius: 8,
+    background: `linear-gradient(165deg, ${selectedColors.surface} 0%, ${hexToRgba(selectedColors.surface, 0.9)} 100%)`,
+    border: `1px solid ${hexToRgba(selectedColors.border, 0.95)}`,
+    borderRadius: spacing.md,
     padding: `${paddingValue}px`,
     boxShadow: dynamicShadows[elevation] || dynamicShadows[0],
-    transform: isHovered ? "translateY(-2px)" : "none",
-    transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
+    transform: isHovered ? "translateY(-3px)" : "none",
+    backdropFilter: "blur(10px)",
+    transition: "transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease",
   };
 };
