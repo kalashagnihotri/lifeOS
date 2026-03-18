@@ -6,6 +6,11 @@ import {
   deleteHabit as deleteHabitInService,
 } from "../services/habitService";
 import { notify } from "../../../shared/utils/notify";
+import { calculateStreak, isCompletedToday } from "../utils/habitUtils";
+
+const normalizeCategory = (value) => {
+  return ["Health", "Study", "Work", "General"].includes(value) ? value : "General";
+};
 
 const useHabits = () => {
   const [habits, setHabits] = useState([]);
@@ -28,8 +33,9 @@ const useHabits = () => {
     };
   }, []);
 
-  const addHabit = async (title) => {
-    const normalizedTitle = title.trim();
+  const addHabit = async (habitInput) => {
+    const normalizedTitle =
+      typeof habitInput === "string" ? habitInput.trim() : String(habitInput?.title || "").trim();
 
     if (!normalizedTitle) {
       notify({
@@ -40,12 +46,17 @@ const useHabits = () => {
       return false;
     }
 
+    const normalizedCategory = normalizeCategory(habitInput?.category);
+
     try {
-      const updatedHabits = await addHabitInService({ title: normalizedTitle });
+      const updatedHabits = await addHabitInService({
+        title: normalizedTitle,
+        category: normalizedCategory,
+      });
       setHabits(updatedHabits);
       notify({
         title: "Habit added",
-        message: `Added "${normalizedTitle}" and tracking started.`,
+        message: `Added "${normalizedTitle}" in ${normalizedCategory}.`,
         type: "success",
       });
       return true;
@@ -61,8 +72,36 @@ const useHabits = () => {
 
   const toggleHabitForToday = async (id) => {
     try {
+      const previousHabit = habits.find((habit) => habit.id === id);
+      const previousStreak = previousHabit ? calculateStreak(previousHabit) : 0;
+      const wasCompletedToday = previousHabit ? isCompletedToday(previousHabit) : false;
+
       const updatedHabits = await toggleHabitForTodayInService(id);
       setHabits(updatedHabits);
+
+      const nextHabit = updatedHabits.find((habit) => habit.id === id);
+
+      if (!nextHabit) {
+        return;
+      }
+
+      const nextStreak = calculateStreak(nextHabit);
+      const isNowCompletedToday = isCompletedToday(nextHabit);
+
+      if (isNowCompletedToday && nextStreak > previousStreak) {
+        notify({
+          title: `🔥 ${nextStreak} day streak!`,
+          message: "Keep going! Consistency compounds.",
+          type: "success",
+        });
+      } else if (!isNowCompletedToday && wasCompletedToday) {
+        notify({
+          title: "Habit unmarked",
+          message: "Today's completion was removed.",
+          type: "info",
+          duration: 1800,
+        });
+      }
     } catch {
       notify({
         title: "Habit update failed",

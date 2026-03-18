@@ -1,5 +1,11 @@
 import { getCurrentUser } from "../../auth/services/authService";
 
+const ALLOWED_CATEGORIES = ["Health", "Study", "Work", "General"];
+
+const normalizeCategory = (value) => {
+  return ALLOWED_CATEGORIES.includes(value) ? value : "General";
+};
+
 const getTodayDate = () => {
   return new Date().toISOString().split("T")[0];
 };
@@ -29,7 +35,16 @@ const readHabits = () => {
 
   try {
     const parsed = JSON.parse(rawValue);
-    return Array.isArray(parsed) ? parsed : [];
+
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.map((habit) => ({
+      ...habit,
+      category: normalizeCategory(habit?.category),
+      completedDates: Array.isArray(habit?.completedDates) ? habit.completedDates : [],
+    }));
   } catch {
     return [];
   }
@@ -55,6 +70,7 @@ export const addHabit = async (habit) => {
   const nextHabit = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
     title: habit.title,
+    category: normalizeCategory(habit?.category),
     createdAt: new Date().toISOString(),
     completedDates: [],
   };

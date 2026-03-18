@@ -5,7 +5,7 @@ const HabitList = ({ habits, onToggle, onDelete }) => {
   if (!habits.length) {
     return (
       <p style={getHabitEmptyStateStyles()}>
-        No habits yet. Add one and start building your streak.
+        Start building your habits today 💪
       </p>
     );
   }
