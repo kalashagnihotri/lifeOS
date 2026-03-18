@@ -29,8 +29,8 @@ const CandleWidget = ({
   }
 
   const visualSize = {
-    width: Math.max(180, size.width - 12),
-    height: Math.max(260, size.height - 24),
+    width: Math.max(220, size.width - 10),
+    height: Math.max(320, size.height - 20),
   };
 
   return createPortal(

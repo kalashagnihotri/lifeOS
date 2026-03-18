@@ -18,6 +18,9 @@ const clampProgress = (timeLeft, totalTime) => {
   return Math.max(0, Math.min(1, ratio));
 };
 
+const BASE_SCENE_WIDTH = 220;
+const BASE_SCENE_HEIGHT = 420;
+
 const Candle = ({
   timeLeft,
   totalTime,
@@ -29,9 +32,9 @@ const Candle = ({
   const showFlame = Boolean(isRunning && !isBreak);
   const showSmoke = Boolean(isBreak);
 
-  const widthScale = visualSize.width / 164;
-  const heightScale = visualSize.height / 220;
-  const scale = Math.max(0.75, Math.min(1.9, Math.min(widthScale, heightScale)));
+  const widthScale = visualSize.width / BASE_SCENE_WIDTH;
+  const heightScale = visualSize.height / BASE_SCENE_HEIGHT;
+  const scale = Math.max(0.62, Math.min(2.05, Math.min(widthScale, heightScale)));
 
   return (
     <section

@@ -18,7 +18,7 @@ const START_FOCUS_FLAG = "lifeos.pendingStartFocusSession";
 const CANDLE_WIDGET_STORAGE_KEY = "lifeos.focus.candleWidget.position";
 const CANDLE_WIDGET_SIZE_STORAGE_KEY = "lifeos.focus.candleWidget.size";
 const DEFAULT_WIDGET_POSITION = { x: 28, y: 124 };
-const DEFAULT_WIDGET_SIZE = { width: 250, height: 390 };
+const DEFAULT_WIDGET_SIZE = { width: 300, height: 450 };
 
 const clampWidgetPosition = (position, size = DEFAULT_WIDGET_SIZE) => {
   const widgetWidth = size.width;
@@ -59,8 +59,8 @@ const loadWidgetPosition = () => {
 };
 
 const clampWidgetSize = (size) => {
-  const minWidth = 220;
-  const minHeight = 320;
+  const minWidth = 250;
+  const minHeight = 360;
   const maxWidth = 340;
   const maxHeight = 500;
 
