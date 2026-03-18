@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { addSession } from "../services/focusService";
 import { minutesToSeconds } from "../utils/timeUtils";
+import { notify } from "../../../shared/utils/notify";
 
 const DEFAULT_SESSION_MINUTES = 25;
 
@@ -41,11 +42,25 @@ const useFocusTimer = ({ sessionMinutes = DEFAULT_SESSION_MINUTES, onSessionComp
 
           setIsRunning(false);
 
-          addSession({ duration: sessionMinutes }).then((result) => {
-            if (typeof onSessionComplete === "function") {
-              onSessionComplete(result.sessions, result.newSession);
-            }
-          });
+          addSession({ duration: sessionMinutes })
+            .then((result) => {
+              if (typeof onSessionComplete === "function") {
+                onSessionComplete(result.sessions, result.newSession);
+              }
+
+              notify({
+                title: "Session complete",
+                message: `${sessionMinutes} minutes logged to your focus history.`,
+                type: "success",
+              });
+            })
+            .catch(() => {
+              notify({
+                title: "Session save failed",
+                message: "Focus session finished but could not be saved.",
+                type: "error",
+              });
+            });
 
           return 0;
         }

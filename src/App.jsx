@@ -15,6 +15,7 @@ import {
   getUserBadgeStyles,
 } from "../features/auth/components/auth.styles";
 import Button from "../shared/components/Button/Button";
+import ToastContainer from "../shared/components/Toast/ToastContainer";
 
 const PAGE_BY_HASH = {
   "#/dashboard": Dashboard,
@@ -55,15 +56,18 @@ function App() {
 
   if (!user) {
     return (
-      <section style={getLoginScreenStyles()}>
-        <div style={getLoginCardStyles()}>
-          <h1 style={getLoginTitleStyles()}>LifeOS</h1>
-          <p style={getLoginSubtitleStyles()}>
-            Sign in to sync your productivity system across your personal workspace.
-          </p>
-          <LoginButton onClick={login} />
-        </div>
-      </section>
+      <>
+        <section style={getLoginScreenStyles()}>
+          <div style={getLoginCardStyles()}>
+            <h1 style={getLoginTitleStyles()}>LifeOS</h1>
+            <p style={getLoginSubtitleStyles()}>
+              Sign in to sync your productivity system across your personal workspace.
+            </p>
+            <LoginButton onClick={login} />
+          </div>
+        </section>
+        <ToastContainer />
+      </>
     );
   }
 
@@ -74,6 +78,7 @@ function App() {
         <Button label="Sign Out" onClick={logout} variant="secondary" size="small" />
       </div>
       <CurrentPage />
+      <ToastContainer />
     </>
   );
 }

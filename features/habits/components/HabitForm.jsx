@@ -11,14 +11,18 @@ const HabitForm = ({ onAddHabit }) => {
   const [isAddPressed, setIsAddPressed] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
+    let didAddSucceed = false;
+
     if (typeof onAddHabit === "function") {
-      onAddHabit(title);
+      didAddSucceed = await onAddHabit(title);
     }
 
-    setTitle("");
+    if (didAddSucceed) {
+      setTitle("");
+    }
   };
 
   return (

@@ -7,8 +7,27 @@ import {
 } from "./header.styles";
 import { ChartColumn } from "lucide-react";
 import Button from "../../shared/components/Button/Button";
+import { notify } from "../../shared/utils/notify";
+
+const OPEN_TASK_COMPOSER_EVENT = "lifeos:open-task-composer";
 
 const Header = ({ isCompact = false }) => {
+  const handleAddTaskClick = () => {
+    if (window.location.hash !== "#/tasks") {
+      window.location.assign("#/tasks");
+    }
+
+    window.setTimeout(() => {
+      window.dispatchEvent(new Event(OPEN_TASK_COMPOSER_EVENT));
+      notify({
+        title: "Quick add",
+        message: "Task composer is ready.",
+        type: "info",
+        duration: 1800,
+      });
+    }, 50);
+  };
+
   return (
     <header style={getHeaderStyles({ isCompact })}>
       <span style={getHeaderAccentStyles()} />
@@ -30,7 +49,7 @@ const Header = ({ isCompact = false }) => {
           label={isCompact ? "+ Add" : "+ Add Task"}
           variant="primary"
           size="small"
-          onClick={() => {}}
+          onClick={handleAddTaskClick}
         />
       </div>
       <span style={getHeaderBottomGlowStyles()} />

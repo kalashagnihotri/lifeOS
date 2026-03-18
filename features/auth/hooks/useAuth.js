@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../core/firebase/firebaseConfig";
 import { signInWithGoogle, signOutUser } from "../services/authService";
+import { notify } from "../../../shared/utils/notify";
 
 const useAuth = () => {
   const [user, setUser] = useState(null);
@@ -17,13 +18,39 @@ const useAuth = () => {
   }, []);
 
   const login = async () => {
-    const loggedInUser = await signInWithGoogle();
-    setUser(loggedInUser);
+    try {
+      const loggedInUser = await signInWithGoogle();
+      setUser(loggedInUser);
+      notify({
+        title: "Welcome back",
+        message: "Google sign-in successful.",
+        type: "success",
+      });
+    } catch {
+      notify({
+        title: "Sign-in failed",
+        message: "Could not sign in with Google.",
+        type: "error",
+      });
+    }
   };
 
   const logout = async () => {
-    await signOutUser();
-    setUser(null);
+    try {
+      await signOutUser();
+      setUser(null);
+      notify({
+        title: "Signed out",
+        message: "You have been logged out.",
+        type: "info",
+      });
+    } catch {
+      notify({
+        title: "Sign-out failed",
+        message: "Please try again.",
+        type: "error",
+      });
+    }
   };
 
   return {
