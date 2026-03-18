@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getTasks } from "../../tasks/services/taskService";
-import { getHabits } from "../../habits/services/habitService";
 import { getSessions } from "../../focus/services/focusService";
 import { generateInsights } from "../services/insightService";
 
@@ -40,9 +39,9 @@ const useInsights = () => {
       }
 
       try {
-        const [tasks, habits, sessions] = await Promise.all([getTasks(), getHabits(), getSessions()]);
+        const [tasks, sessions] = await Promise.all([getTasks(), getSessions()]);
         const mood = getMoodSnapshot();
-        const generatedInsights = await generateInsights({ tasks, habits, sessions, mood });
+        const generatedInsights = await generateInsights({ tasks, sessions, mood });
 
         if (isActive) {
           setInsights(generatedInsights);

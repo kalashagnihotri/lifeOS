@@ -3,19 +3,23 @@ import theme from "../../../core/theme";
 const colors = theme.colors.dark;
 const { spacing, typography } = theme;
 
-export const getTimerCardStyles = ({ isRunning = false }) => ({
-  border: `1px solid ${colors.border}`,
+export const getTimerCardStyles = ({ isRunning = false, isZenMode = false }) => ({
+  border: isZenMode ? "none" : `1px solid ${colors.border}`,
   borderRadius: spacing.xxl,
-  background: "linear-gradient(180deg, rgba(23, 28, 40, 0.96) 0%, rgba(15, 17, 23, 0.92) 100%)",
+  background: isZenMode
+    ? "transparent"
+    : "linear-gradient(180deg, rgba(23, 28, 40, 0.96) 0%, rgba(15, 17, 23, 0.92) 100%)",
   padding: `${spacing.xxl + spacing.md}px ${spacing.xxl}px`,
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   gap: `${spacing.lg}px`,
   transform: isRunning ? "scale(1.01)" : "none",
-  boxShadow: isRunning
-    ? "0 0 0 1px rgba(167, 176, 255, 0.48), 0 18px 34px rgba(8, 10, 15, 0.5)"
-    : "0 14px 28px rgba(8, 10, 15, 0.42)",
+  boxShadow: isZenMode
+    ? "none"
+    : isRunning
+      ? "0 0 0 1px rgba(167, 176, 255, 0.48), 0 18px 34px rgba(8, 10, 15, 0.5)"
+      : "0 14px 28px rgba(8, 10, 15, 0.42)",
   animation: isRunning ? "lifeosPulseSoft 1.8s infinite" : "none",
   transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
 });

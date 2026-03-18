@@ -17,7 +17,7 @@ const getWickBottom = (progress = 1, scale = 1) =>
 const getWickTop = (progress = 1, scale = 1) =>
   getWickBottom(progress, scale) + scalePx(BASE_WICK_HEIGHT, scale);
 
-export const getCandleSceneStyles = ({ width = 164, height = 220 } = {}) => ({
+export const getCandleSceneStyles = ({ width = 164, height = 220, isZenMode = false } = {}) => ({
   width: `${width}px`,
   height: `${height}px`,
   minHeight: `${height}px`,
@@ -26,10 +26,11 @@ export const getCandleSceneStyles = ({ width = 164, height = 220 } = {}) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  background:
-    "radial-gradient(circle at 50% 10%, rgba(167, 176, 255, 0.12) 0%, rgba(15, 17, 23, 0) 42%), rgba(11, 13, 18, 0.55)",
+  background: isZenMode
+    ? "transparent"
+    : "radial-gradient(circle at 50% 10%, rgba(167, 176, 255, 0.12) 0%, rgba(15, 17, 23, 0) 42%), rgba(11, 13, 18, 0.55)",
   border: "none",
-  boxShadow: "inset 0 0 18px rgba(8, 10, 15, 0.36)",
+  boxShadow: isZenMode ? "none" : "inset 0 0 18px rgba(8, 10, 15, 0.36)",
   overflow: "hidden",
 });
 

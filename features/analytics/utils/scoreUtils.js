@@ -27,19 +27,6 @@ const getCompletedTasksToday = (tasks, todayKey) => {
   }).length;
 };
 
-const getCompletedHabitsToday = (habits, todayKey) => {
-  return habits.reduce((count, habit) => {
-    const completionLog = Array.isArray(habit?.completionLog) ? habit.completionLog : [];
-
-    if (completionLog.some((entry) => getDateKey(entry.timestamp || entry.date) === todayKey)) {
-      return count + 1;
-    }
-
-    const completedDates = Array.isArray(habit?.completedDates) ? habit.completedDates : [];
-    return completedDates.includes(todayKey) ? count + 1 : count;
-  }, 0);
-};
-
 const getFocusMinutesToday = (sessions, todayKey) => {
   return sessions.reduce((total, session) => {
     if (getDateKey(session?.completedAt) !== todayKey) {
@@ -50,18 +37,15 @@ const getFocusMinutesToday = (sessions, todayKey) => {
   }, 0);
 };
 
-export const calculateScore = (tasks = [], habits = [], sessions = []) => {
+export const calculateScore = (tasks = [], sessions = []) => {
   const todayKey = getTodayKey();
   const completedTasksToday = getCompletedTasksToday(tasks, todayKey);
-  const completedHabitsToday = getCompletedHabitsToday(habits, todayKey);
   const focusMinutesToday = getFocusMinutesToday(sessions, todayKey);
 
-  const taskScore = clamp((completedTasksToday / 5) * 40, 0, 40);
-  const habitDenominator = Math.max(habits.length, 1);
-  const habitScore = clamp((completedHabitsToday / habitDenominator) * 30, 0, 30);
-  const focusScore = clamp((focusMinutesToday / 120) * 30, 0, 30);
+  const taskScore = clamp((completedTasksToday / 5) * 60, 0, 60);
+  const focusScore = clamp((focusMinutesToday / 120) * 40, 0, 40);
 
-  const score = Math.round(taskScore + habitScore + focusScore);
+  const score = Math.round(taskScore + focusScore);
   const label = score >= 75 ? "Great day 🚀" : "Keep improving";
 
   return {
@@ -69,12 +53,10 @@ export const calculateScore = (tasks = [], habits = [], sessions = []) => {
     label,
     breakdown: {
       tasks: Math.round(taskScore),
-      habits: Math.round(habitScore),
       focus: Math.round(focusScore),
     },
     raw: {
       completedTasksToday,
-      completedHabitsToday,
       focusMinutesToday,
     },
   };

@@ -70,8 +70,8 @@ const getMetaStyles = () => ({
   fontWeight: typography.fontWeights.regular,
 });
 
-const DailyScoreCard = ({ tasks = [], habits = [], sessions = [] }) => {
-  const scoreData = useMemo(() => calculateScore(tasks, habits, sessions), [tasks, habits, sessions]);
+const DailyScoreCard = ({ tasks = [], sessions = [] }) => {
+  const scoreData = useMemo(() => calculateScore(tasks, sessions), [tasks, sessions]);
 
   return (
     <Card padding="lg" elevation={1}>
@@ -85,7 +85,7 @@ const DailyScoreCard = ({ tasks = [], habits = [], sessions = [] }) => {
           <div style={getProgressFillStyles({ score: scoreData.score })} />
         </div>
         <p style={getMetaStyles()}>
-          Today: {scoreData.raw.completedTasksToday} tasks, {scoreData.raw.completedHabitsToday} habits, {scoreData.raw.focusMinutesToday} focus minutes
+          Today: {scoreData.raw.completedTasksToday} tasks, {scoreData.raw.focusMinutesToday} focus minutes
         </p>
       </div>
     </Card>

@@ -19,6 +19,7 @@ const TimerDisplay = ({
   currentMode,
   completedFocusSessions,
   autoPlan,
+  isZenMode = false,
 }) => {
   const modeLabel = modeLabelById[currentMode] || "Pomodoro";
   const autoPlanMeta = autoPlan?.isEnabled
@@ -26,11 +27,11 @@ const TimerDisplay = ({
     : null;
 
   return (
-    <section style={getTimerCardStyles({ isRunning })}>
+    <section style={getTimerCardStyles({ isRunning, isZenMode })}>
       <p style={getTimerLabelStyles()}>{`Now: ${modeLabel}`}</p>
       <p style={getTimerDisplayStyles({ isRunning })}>{formatTime(timeLeft)}</p>
-      <p style={getPomodoroMetaStyles()}>{`Completed focus blocks: ${completedFocusSessions}`}</p>
-      {autoPlanMeta ? <p style={getPomodoroMetaStyles()}>{autoPlanMeta}</p> : null}
+      {!isZenMode ? <p style={getPomodoroMetaStyles()}>{`Completed focus blocks: ${completedFocusSessions}`}</p> : null}
+      {!isZenMode && autoPlanMeta ? <p style={getPomodoroMetaStyles()}>{autoPlanMeta}</p> : null}
     </section>
   );
 };

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { CheckCheck, CheckCircle2, Timer } from "lucide-react";
+import { CheckCircle2, Timer } from "lucide-react";
 import Card from "../../../shared/components/Card/Card";
 import {
   getTimelineContainerStyles,
@@ -77,7 +77,7 @@ const getFocusMessage = (session) => {
   return `Completed a focus session (${minutes} min)`;
 };
 
-const buildTimelineItems = ({ tasks, habits, sessions }) => {
+const buildTimelineItems = ({ tasks, sessions }) => {
   const taskItems = tasks
     .filter((task) => task.completed)
     .map((task) => {
@@ -96,24 +96,6 @@ const buildTimelineItems = ({ tasks, habits, sessions }) => {
     })
     .filter(Boolean);
 
-  const habitItems = habits
-    .flatMap((habit) => {
-      const completionLog = Array.isArray(habit.completionLog) && habit.completionLog.length
-        ? habit.completionLog
-        : (Array.isArray(habit.completedDates) ? habit.completedDates : []).map((date) => ({
-            date,
-            timestamp: `${date}T12:00:00`,
-          }));
-
-      return completionLog.map((entry) => ({
-        id: `habit-${habit.id}-${entry.date}`,
-        type: "habit",
-        message: `Completed habit: ${habit.title}`,
-        timestamp: entry.timestamp,
-      }));
-    })
-    .filter((item) => item.timestamp);
-
   const focusItems = sessions
     .filter((session) => session.completedAt)
     .map((session) => ({
@@ -123,7 +105,7 @@ const buildTimelineItems = ({ tasks, habits, sessions }) => {
       timestamp: session.completedAt,
     }));
 
-  return [...taskItems, ...habitItems, ...focusItems]
+  return [...taskItems, ...focusItems]
     .sort((firstItem, secondItem) => {
       return new Date(secondItem.timestamp).getTime() - new Date(firstItem.timestamp).getTime();
     });
@@ -134,17 +116,13 @@ const ActivityIcon = ({ type }) => {
     return <CheckCircle2 size={12} strokeWidth={2.2} />;
   }
 
-  if (type === "habit") {
-    return <CheckCheck size={12} strokeWidth={2.2} />;
-  }
-
   return <Timer size={12} strokeWidth={2.2} />;
 };
 
-const ActivityTimeline = ({ tasks = [], habits = [], sessions = [] }) => {
+const ActivityTimeline = ({ tasks = [], sessions = [] }) => {
   const timelineItems = useMemo(() => {
-    return buildTimelineItems({ tasks, habits, sessions });
-  }, [tasks, habits, sessions]);
+    return buildTimelineItems({ tasks, sessions });
+  }, [tasks, sessions]);
 
   const timelineByDay = useMemo(() => {
     return timelineItems.reduce((accumulator, item) => {
@@ -175,7 +153,7 @@ const ActivityTimeline = ({ tasks = [], habits = [], sessions = [] }) => {
         <h3 style={getTimelineTitleStyles()}>Activity Timeline</h3>
 
         {!dayKeys.length ? (
-          <p style={getTimelineEmptyStyles()}>No activity yet. Complete a task, habit, or focus session to begin your journey.</p>
+          <p style={getTimelineEmptyStyles()}>No activity yet. Complete a task or focus session to begin your journey.</p>
         ) : (
           <div style={getTimelineScrollStyles()}>
             {dayKeys.map((dayKey) => {

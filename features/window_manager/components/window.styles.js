@@ -47,7 +47,8 @@ export const getWindowShellStyles = ({
       : isActive
         ? "translateY(0) scale(1)"
         : "translateY(2px) scale(0.992)",
-  pointerEvents: isMinimizing ? "none" : "auto",
+  pointerEvents: isMinimizing || isMinimized ? "none" : "auto",
+  visibility: isMinimized ? "hidden" : "visible",
   transformOrigin: "bottom center",
   transition: isDragging || isResizing
     ? "none"
@@ -128,8 +129,9 @@ export const getWindowCloseButtonStyles = ({ isHovered = false, tone = "close" }
   };
 };
 
-export const getWindowContentStyles = () => ({
+export const getWindowContentStyles = ({ isMinimized = false } = {}) => ({
   flex: 1,
+  display: isMinimized ? "none" : "block",
   overflow: "auto",
   padding: `${spacing.md}px`,
   backgroundColor: "rgba(20, 20, 30, 0.78)",

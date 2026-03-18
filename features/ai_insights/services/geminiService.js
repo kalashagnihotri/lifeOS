@@ -20,42 +20,6 @@ const summarizeTasks = (tasks) => {
   };
 };
 
-const getHabitStreak = (habit) => {
-  const completedDates = Array.isArray(habit?.completedDates) ? habit.completedDates : [];
-
-  if (!completedDates.length) {
-    return 0;
-  }
-
-  const dateSet = new Set(completedDates);
-  let streak = 0;
-
-  while (true) {
-    const date = new Date();
-    date.setDate(date.getDate() - streak);
-    const dateKey = date.toISOString().split("T")[0];
-
-    if (!dateSet.has(dateKey)) {
-      break;
-    }
-
-    streak += 1;
-  }
-
-  return streak;
-};
-
-const summarizeHabits = (habits) => {
-  const normalizedHabits = toSafeArray(habits);
-
-  return normalizedHabits.slice(0, 10).map((habit) => {
-    return {
-      title: habit.title || "Untitled habit",
-      streak: getHabitStreak(habit),
-    };
-  });
-};
-
 const summarizeFocusSessions = (sessions) => {
   const normalizedSessions = toSafeArray(sessions);
   const totalMinutes = normalizedSessions.reduce((total, session) => {
@@ -113,9 +77,8 @@ const normalizeInsights = (rawInsights) => {
     .slice(0, 5);
 };
 
-const createPrompt = ({ tasks, habits, sessions, mood }) => {
+const createPrompt = ({ tasks, sessions, mood }) => {
   const taskSummary = summarizeTasks(tasks);
-  const habitSummary = summarizeHabits(habits);
   const focusSummary = summarizeFocusSessions(sessions);
   const moodSummary = mood
     ? { label: mood.label || "unknown", score: Number(mood.score) || 0 }
@@ -125,9 +88,6 @@ const createPrompt = ({ tasks, habits, sessions, mood }) => {
 
 Tasks:
 ${JSON.stringify(taskSummary, null, 2)}
-
-Habits:
-${JSON.stringify(habitSummary, null, 2)}
 
 Focus sessions:
 ${JSON.stringify(focusSummary, null, 2)}

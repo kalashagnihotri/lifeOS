@@ -139,7 +139,7 @@ const Window = ({
         </div>
         <span style={getWindowControlsSpacerStyles()} />
       </header>
-      {!isMinimized ? <section style={getWindowContentStyles()}>{children}</section> : null}
+      <section style={getWindowContentStyles({ isMinimized })}>{children}</section>
       {isDragging && snapPreview ? <span style={getWindowSnapPreviewStyles({ snapPreview })} /> : null}
 
       {!isMinimized && !isMaximized ? (

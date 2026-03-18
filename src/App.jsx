@@ -1,9 +1,8 @@
 import { useCallback, useMemo } from "react";
 import { useEffect } from "react";
-import { BedDouble, Brain, CheckSquare, Flame, LayoutDashboard, Timer } from "lucide-react";
+import { BedDouble, Brain, CheckSquare, LayoutDashboard, Timer } from "lucide-react";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Tasks from "../pages/Tasks/Tasks";
-import Habits from "../pages/Habits/Habits";
 import Focus from "../pages/Focus/Focus";
 import Insights from "../pages/Insights/Insights";
 import Sleep from "../pages/Sleep/Sleep";
@@ -19,9 +18,6 @@ import {
 } from "../features/auth/components/auth.styles";
 import Button from "../shared/components/Button/Button";
 import ToastContainer from "../shared/components/Toast/ToastContainer";
-import CommandPalette from "../features/command_palette/components/CommandPalette";
-import useCommandPalette from "../features/command_palette/hooks/useCommandPalette";
-import { createCommands } from "../features/command_palette/data/commands";
 import QuickAdd from "../features/quick_add/components/QuickAdd";
 import useQuickAdd from "../features/quick_add/hooks/useQuickAdd";
 import Desktop from "../features/desktop/components/Desktop";
@@ -44,14 +40,6 @@ const APP_REGISTRY = {
     hash: "#/tasks",
     icon: CheckSquare,
     component: Tasks,
-  },
-  habits: {
-    id: "habits",
-    title: "Habits",
-    label: "Habits",
-    hash: "#/habits",
-    icon: Flame,
-    component: Habits,
   },
   focus: {
     id: "focus",
@@ -82,7 +70,6 @@ const APP_REGISTRY = {
 const APP_BY_HASH = {
   "#/dashboard": APP_REGISTRY.dashboard,
   "#/tasks": APP_REGISTRY.tasks,
-  "#/habits": APP_REGISTRY.habits,
   "#/focus": APP_REGISTRY.focus,
   "#/insights": APP_REGISTRY.insights,
   "#/sleep": APP_REGISTRY.sleep,
@@ -93,7 +80,6 @@ const DESKTOP_HASH = "#/desktop";
 const DESKTOP_APPS = [
   APP_REGISTRY.dashboard,
   APP_REGISTRY.tasks,
-  APP_REGISTRY.habits,
   APP_REGISTRY.focus,
   APP_REGISTRY.sleep,
   APP_REGISTRY.insights,
@@ -121,22 +107,10 @@ function App() {
   const {
     isOpen: isQuickAddOpen,
     inputValue,
-    openQuickAdd,
     closeQuickAdd,
     setInputValue,
     submitTask,
   } = useQuickAdd({ enabled: Boolean(user) });
-
-  const commands = useMemo(() => createCommands({ onAddTask: openQuickAdd }), [openQuickAdd]);
-  const {
-    isOpen: isPaletteOpen,
-    searchQuery,
-    selectedIndex,
-    closePalette,
-    setSearchQuery,
-    setSelectedIndex,
-    filteredCommands,
-  } = useCommandPalette({ commands, enabled: Boolean(user) });
 
   const openAppWindow = useCallback((appId) => {
     const app = APP_REGISTRY[appId];
@@ -254,7 +228,7 @@ function App() {
         onCloseDockWindow={closeWindow}
         onCloseAllWindows={handleCloseAllWindows}
       >
-        {openWindows.filter((windowItem) => !windowItem.isMinimized || windowItem.isMinimizing).map((windowItem) => {
+        {openWindows.map((windowItem) => {
           const WindowComponent = windowItem.component;
 
           return (
@@ -286,15 +260,6 @@ function App() {
         })}
       </Desktop>
 
-      <CommandPalette
-        isOpen={isPaletteOpen}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        filteredCommands={filteredCommands}
-        selectedIndex={selectedIndex}
-        setSelectedIndex={setSelectedIndex}
-        onClose={closePalette}
-      />
       <QuickAdd
         isOpen={isQuickAddOpen}
         inputValue={inputValue}

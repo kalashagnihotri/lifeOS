@@ -26,6 +26,7 @@ const Candle = ({
   totalTime,
   isRunning,
   isBreak,
+  isZenMode = false,
   visualSize = { width: 164, height: 220 },
 }) => {
   const progress = clampProgress(timeLeft, totalTime);
@@ -38,7 +39,7 @@ const Candle = ({
 
   return (
     <section
-      style={getCandleSceneStyles({ width: visualSize.width, height: visualSize.height })}
+      style={getCandleSceneStyles({ width: visualSize.width, height: visualSize.height, isZenMode })}
       aria-label="Focus candle visualization"
     >
       <style>{`

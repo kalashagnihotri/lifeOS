@@ -1,7 +1,6 @@
 import {
   calculateTaskCompletionRate,
   calculateTotalFocusTime,
-  getTopHabitStreak,
 } from "../utils/insightUtils";
 import { generateGeminiInsights } from "./geminiService";
 
@@ -12,11 +11,10 @@ const createInsight = (index, title, description, type) => ({
   type,
 });
 
-export const generateRuleBasedInsights = ({ tasks, habits, sessions, mood }) => {
+export const generateRuleBasedInsights = ({ tasks, sessions, mood }) => {
   const insights = [];
   const completionRate = calculateTaskCompletionRate(tasks);
   const totalFocusMinutes = calculateTotalFocusTime(sessions);
-  const topHabit = getTopHabitStreak(habits);
 
   if (completionRate >= 70) {
     insights.push(
@@ -58,26 +56,6 @@ export const generateRuleBasedInsights = ({ tasks, habits, sessions, mood }) => 
     );
   }
 
-  if (topHabit.streak > 0) {
-    insights.push(
-      createInsight(
-        insights.length + 1,
-        "Habit Streak Highlight",
-        `${topHabit.title} is at a ${topHabit.streak}-day streak. Keep this rhythm intact.`,
-        "positive"
-      )
-    );
-  } else {
-    insights.push(
-      createInsight(
-        insights.length + 1,
-        "Habit Consistency Nudge",
-        "No active streak detected. Completing one habit today can restart momentum.",
-        "warning"
-      )
-    );
-  }
-
   if (mood && typeof mood.score === "number") {
     if (mood.score >= 4) {
       insights.push(
@@ -104,7 +82,7 @@ export const generateRuleBasedInsights = ({ tasks, habits, sessions, mood }) => 
     createInsight(
       insights.length + 1,
       "Next Step Recommendation",
-      "Plan tomorrow with 3 priority tasks, 1 habit anchor, and 2 focus blocks for balance.",
+      "Plan tomorrow with 3 priority tasks and 2 focus blocks for balance.",
       "suggestion"
     )
   );

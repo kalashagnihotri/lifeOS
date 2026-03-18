@@ -6,8 +6,6 @@ import TaskSummary from "../../features/dashboard/components/TaskSummary";
 import ActivityTimeline from "../../features/dashboard/components/ActivityTimeline";
 import DailyScoreCard from "../../features/analytics/components/DailyScoreCard";
 import { getTasks } from "../../features/tasks/services/taskService";
-import { getHabits } from "../../features/habits/services/habitService";
-import { calculateStreak } from "../../features/habits/utils/habitUtils";
 import { getSessions } from "../../features/focus/services/focusService";
 import {
   getDashboardPageStyles,
@@ -29,16 +27,14 @@ const formatFocusTime = (minutes) => {
 
 const Dashboard = ({ windowMode = false }) => {
   const [tasks, setTasks] = useState([]);
-  const [habits, setHabits] = useState([]);
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
     let isActive = true;
 
     const loadDashboardData = async () => {
-      const [loadedTasks, loadedHabits, loadedSessions] = await Promise.all([
+      const [loadedTasks, loadedSessions] = await Promise.all([
         getTasks(),
-        getHabits(),
         getSessions(),
       ]);
 
@@ -47,7 +43,6 @@ const Dashboard = ({ windowMode = false }) => {
       }
 
       setTasks(loadedTasks);
-      setHabits(loadedHabits);
       setSessions(loadedSessions);
     };
 
@@ -62,9 +57,6 @@ const Dashboard = ({ windowMode = false }) => {
     const completedTasks = tasks.filter((task) => task.completed).length;
     const pendingTasks = tasks.length - completedTasks;
     const totalFocusMinutes = sessions.reduce((total, session) => total + (Number(session.duration) || 0), 0);
-    const topStreak = habits.reduce((highestStreak, habit) => {
-      return Math.max(highestStreak, calculateStreak(habit));
-    }, 0);
 
     return [
       {
@@ -78,17 +70,12 @@ const Dashboard = ({ windowMode = false }) => {
         description: `${sessions.length} sessions logged`,
       },
       {
-        title: "Top Habit Streak",
-        value: `${topStreak} day${topStreak === 1 ? "" : "s"}`,
-        description: habits.length ? "Best active streak" : "No habits yet",
-      },
-      {
-        title: "Total Habits",
-        value: habits.length,
-        description: "Tracked habits",
+        title: "Total Tasks",
+        value: tasks.length,
+        description: "Created tasks",
       },
     ];
-  }, [tasks, sessions, habits]);
+  }, [tasks, sessions]);
 
   const content = (
     <div style={getDashboardPageStyles()}>
@@ -111,7 +98,7 @@ const Dashboard = ({ windowMode = false }) => {
       </section>
 
       <section style={getDashboardSectionStyles()}>
-        <DailyScoreCard tasks={tasks} habits={habits} sessions={sessions} />
+        <DailyScoreCard tasks={tasks} sessions={sessions} />
       </section>
 
       <section style={getDashboardSectionStyles()}>
@@ -119,7 +106,7 @@ const Dashboard = ({ windowMode = false }) => {
       </section>
 
       <section style={getDashboardSectionStyles()}>
-        <ActivityTimeline tasks={tasks} habits={habits} sessions={sessions} />
+        <ActivityTimeline tasks={tasks} sessions={sessions} />
       </section>
     </div>
   );
