@@ -3,6 +3,7 @@ import {
   calculateTotalFocusTime,
   getTopHabitStreak,
 } from "../utils/insightUtils";
+import { generateGeminiInsights } from "./geminiService";
 
 const createInsight = (index, title, description, type) => ({
   id: `insight-${index}`,
@@ -11,7 +12,7 @@ const createInsight = (index, title, description, type) => ({
   type,
 });
 
-export const generateInsights = ({ tasks, habits, sessions, mood }) => {
+export const generateRuleBasedInsights = ({ tasks, habits, sessions, mood }) => {
   const insights = [];
   const completionRate = calculateTaskCompletionRate(tasks);
   const totalFocusMinutes = calculateTotalFocusTime(sessions);
@@ -109,4 +110,18 @@ export const generateInsights = ({ tasks, habits, sessions, mood }) => {
   );
 
   return insights.slice(0, 6);
+};
+
+export const generateInsights = async (payload) => {
+  try {
+    const aiInsights = await generateGeminiInsights(payload);
+
+    if (aiInsights.length) {
+      return aiInsights;
+    }
+  } catch {
+    return generateRuleBasedInsights(payload);
+  }
+
+  return generateRuleBasedInsights(payload);
 };

@@ -8,16 +8,16 @@ import {
 } from "./insights.styles";
 
 const Insights = () => {
-  const { insights } = useInsights();
+  const { insights, isLoading } = useInsights();
 
   return (
     <MainLayout>
       <section style={getInsightsPageStyles()}>
         <h1 style={getInsightsHeaderStyles()}>AI Insights</h1>
         <p style={getInsightsSubHeaderStyles()}>
-          Pattern-driven recommendations generated from your recent productivity activity.
+          AI-generated recommendations based on your recent productivity activity.
         </p>
-        <InsightList insights={insights} />
+        <InsightList insights={insights} isLoading={isLoading} />
       </section>
     </MainLayout>
   );

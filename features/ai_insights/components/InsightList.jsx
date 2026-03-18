@@ -1,7 +1,11 @@
 import InsightCard from "./InsightCard";
 import { getEmptyStateStyles, getInsightListStyles } from "./ai.styles";
 
-const InsightList = ({ insights }) => {
+const InsightList = ({ insights, isLoading = false }) => {
+  if (isLoading) {
+    return <p style={getEmptyStateStyles()}>Generating insights...</p>;
+  }
+
   if (!insights.length) {
     return <p style={getEmptyStateStyles()}>No insights available yet.</p>;
   }

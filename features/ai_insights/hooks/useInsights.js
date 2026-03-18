@@ -29,17 +29,32 @@ const getMoodSnapshot = () => {
 
 const useInsights = () => {
   const [insights, setInsights] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isActive = true;
 
     const loadInsights = async () => {
-      const [tasks, habits, sessions] = await Promise.all([getTasks(), getHabits(), getSessions()]);
-      const mood = getMoodSnapshot();
-      const generatedInsights = generateInsights({ tasks, habits, sessions, mood });
-
       if (isActive) {
-        setInsights(generatedInsights);
+        setIsLoading(true);
+      }
+
+      try {
+        const [tasks, habits, sessions] = await Promise.all([getTasks(), getHabits(), getSessions()]);
+        const mood = getMoodSnapshot();
+        const generatedInsights = await generateInsights({ tasks, habits, sessions, mood });
+
+        if (isActive) {
+          setInsights(generatedInsights);
+        }
+      } catch {
+        if (isActive) {
+          setInsights([]);
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -50,7 +65,7 @@ const useInsights = () => {
     };
   }, []);
 
-  return { insights };
+  return { insights, isLoading };
 };
 
 export default useInsights;
