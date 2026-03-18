@@ -14,16 +14,19 @@ export const getInsightListStyles = () => ({
   margin: 0,
   padding: 0,
   display: "grid",
-  gridTemplateColumns: `repeat(auto-fit, minmax(${spacing.xxl * 9}px, 1fr))`,
+  gridTemplateColumns: `repeat(auto-fit, minmax(${spacing.xxl * 8}px, 1fr))`,
   gap: `${spacing.md}px`,
+  alignItems: "stretch",
 });
 
-export const getInsightCardShellStyles = ({ type }) => ({
+export const getInsightCardShellStyles = ({ type, isHovered = false }) => ({
   display: "flex",
   flexDirection: "column",
   gap: `${spacing.sm}px`,
   borderLeft: `${spacing.xs}px solid ${accentByType[type] || colors.primary}`,
-  transition: "transform 0.2s ease, border-color 0.2s ease",
+  paddingLeft: `${spacing.sm}px`,
+  transform: isHovered ? "translateY(-2px)" : "none",
+  transition: "transform 0.25s ease, border-color 0.25s ease",
 });
 
 export const getInsightTitleStyles = () => ({

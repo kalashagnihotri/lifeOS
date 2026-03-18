@@ -30,6 +30,7 @@ const getChartPlaceholderStyles = () => ({
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.medium,
   fontWeight: typography.fontWeights.regular,
+  transition: "background-color 0.25s ease, border-color 0.25s ease",
 });
 
 const ProductivityChart = () => {

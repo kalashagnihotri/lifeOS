@@ -6,10 +6,10 @@ const { spacing, typography } = theme;
 export const getHabitsPageStyles = () => ({
   display: "flex",
   flexDirection: "column",
-  gap: `${spacing.xl}px`,
+  gap: `clamp(${spacing.md}px, 2vw, ${spacing.xl}px)`,
   minHeight: "100%",
   minWidth: 0,
-  padding: `${spacing.xl}px`,
+  padding: `clamp(${spacing.md}px, 3vw, ${spacing.xl}px)`,
   backgroundColor: colors.background,
 });
 
@@ -17,7 +17,7 @@ export const getHabitsHeaderStyles = () => ({
   margin: 0,
   color: colors.text.primary,
   fontFamily: typography.fontFamily,
-  fontSize: typography.fontSizes.heading,
+  fontSize: `clamp(${typography.fontSizes.xl}px, 3vw, ${typography.fontSizes.heading}px)`,
   fontWeight: typography.fontWeights.bold,
 });
 

@@ -41,6 +41,8 @@ export const getButtonStyles = ({
   size = "medium",
   disabled = false,
   isHovered = false,
+  isFocused = false,
+  isPressed = false,
 }) => {
   const selectedVariant = variantStyles[variant] || variantStyles.primary;
   const selectedSize = sizeStyles[size] || sizeStyles.medium;
@@ -53,9 +55,13 @@ export const getButtonStyles = ({
     color: selectedVariant.color,
     fontFamily: typography.fontFamily,
     fontWeight: typography.fontWeights.medium,
+    outline: "none",
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.55 : 1,
-    filter: isHovered && !disabled ? "brightness(0.94)" : "none",
-    transition: "background-color 0.2s ease, opacity 0.2s ease",
+    filter: isHovered && !disabled ? "brightness(0.96)" : "none",
+    boxShadow: isFocused && !disabled ? `0 0 0 ${spacing.xs}px ${colors.secondary}` : "none",
+    transform: disabled ? "none" : isPressed ? "scale(0.98)" : isHovered ? "translateY(-1px)" : "none",
+    transition:
+      "background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease, transform 0.2s ease, box-shadow 0.2s ease",
   };
 };

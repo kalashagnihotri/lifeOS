@@ -5,11 +5,11 @@ import {
   getTimerLabelStyles,
 } from "./focus.styles";
 
-const TimerDisplay = ({ timeLeft }) => {
+const TimerDisplay = ({ timeLeft, isRunning }) => {
   return (
-    <section style={getTimerCardStyles()}>
+    <section style={getTimerCardStyles({ isRunning })}>
       <p style={getTimerLabelStyles()}>Focus Session</p>
-      <p style={getTimerDisplayStyles()}>{formatTime(timeLeft)}</p>
+      <p style={getTimerDisplayStyles({ isRunning })}>{formatTime(timeLeft)}</p>
     </section>
   );
 };

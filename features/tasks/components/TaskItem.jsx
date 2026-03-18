@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   getTaskCheckboxStyles,
   getTaskDeleteButtonStyles,
@@ -11,12 +11,38 @@ import {
 const TaskItem = ({ task, onToggle, onDelete }) => {
   const [isItemHovered, setIsItemHovered] = useState(false);
   const [isDeleteHovered, setIsDeleteHovered] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const removeTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
+      setIsMounted(true);
+    });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+
+      if (removeTimeoutRef.current) {
+        window.clearTimeout(removeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleDelete = () => {
+    setIsRemoving(true);
+    removeTimeoutRef.current = window.setTimeout(() => {
+      onDelete(task.id);
+    }, 220);
+  };
 
   return (
     <li
       style={getTaskItemStyles({
         isHovered: isItemHovered,
         completed: task.completed,
+        isMounted,
+        isRemoving,
       })}
       onMouseEnter={() => setIsItemHovered(true)}
       onMouseLeave={() => setIsItemHovered(false)}
@@ -37,7 +63,7 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
 
       <button
         type="button"
-        onClick={() => onDelete(task.id)}
+        onClick={handleDelete}
         style={getTaskDeleteButtonStyles({ isHovered: isDeleteHovered })}
         onMouseEnter={() => setIsDeleteHovered(true)}
         onMouseLeave={() => setIsDeleteHovered(false)}

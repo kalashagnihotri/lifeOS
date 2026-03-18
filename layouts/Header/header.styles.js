@@ -5,35 +5,39 @@ const { spacing, typography } = theme;
 
 const headerHeight = spacing.xxl * 2;
 
-export const getHeaderStyles = () => ({
+export const getHeaderStyles = ({ isCompact = false }) => ({
   minHeight: `${headerHeight}px`,
   height: `${headerHeight}px`,
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: `0 ${spacing.xl}px`,
+  padding: `0 ${isCompact ? spacing.md : spacing.xl}px`,
   backgroundColor: colors.surface,
   borderBottom: `1px solid ${colors.border}`,
   position: "sticky",
   top: 0,
-  zIndex: 1,
+  zIndex: 2,
   boxSizing: "border-box",
+  backdropFilter: "blur(4px)",
+  transition: "padding 0.25s ease",
 });
 
-export const getHeaderBrandStyles = () => ({
+export const getHeaderBrandStyles = ({ isCompact = false }) => ({
   margin: 0,
   color: colors.text.primary,
   fontFamily: typography.fontFamily,
-  fontSize: typography.fontSizes.large,
+  fontSize: isCompact ? typography.fontSizes.medium : typography.fontSizes.large,
   fontWeight: typography.fontWeights.bold,
+  transition: "font-size 0.25s ease",
 });
 
-export const getHeaderRightStyles = () => ({
+export const getHeaderRightStyles = ({ isCompact = false }) => ({
   display: "flex",
   alignItems: "center",
-  gap: `${spacing.md}px`,
+  gap: `${isCompact ? spacing.xs : spacing.md}px`,
   color: colors.text.secondary,
   fontFamily: typography.fontFamily,
-  fontSize: typography.fontSizes.medium,
+  fontSize: isCompact ? typography.fontSizes.small : typography.fontSizes.medium,
   fontWeight: typography.fontWeights.regular,
+  transition: "gap 0.25s ease, font-size 0.25s ease",
 });

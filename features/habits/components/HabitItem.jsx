@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { calculateStreak, isCompletedToday } from "../utils/habitUtils";
 import {
   getHabitActionsStyles,
@@ -14,13 +14,42 @@ const HabitItem = ({ habit, onToggle, onDelete }) => {
   const [isItemHovered, setIsItemHovered] = useState(false);
   const [isToggleHovered, setIsToggleHovered] = useState(false);
   const [isDeleteHovered, setIsDeleteHovered] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const removeTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
+      setIsMounted(true);
+    });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+
+      if (removeTimeoutRef.current) {
+        window.clearTimeout(removeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const completedToday = isCompletedToday(habit);
   const streak = calculateStreak(habit);
 
+  const handleDelete = () => {
+    setIsRemoving(true);
+    removeTimeoutRef.current = window.setTimeout(() => {
+      onDelete(habit.id);
+    }, 220);
+  };
+
   return (
     <li
-      style={getHabitItemStyles({ isHovered: isItemHovered, completedToday })}
+      style={getHabitItemStyles({
+        isHovered: isItemHovered,
+        completedToday,
+        isMounted,
+        isRemoving,
+      })}
       onMouseEnter={() => setIsItemHovered(true)}
       onMouseLeave={() => setIsItemHovered(false)}
     >
@@ -42,7 +71,7 @@ const HabitItem = ({ habit, onToggle, onDelete }) => {
 
         <button
           type="button"
-          onClick={() => onDelete(habit.id)}
+          onClick={handleDelete}
           style={getHabitDeleteButtonStyles({ isHovered: isDeleteHovered })}
           onMouseEnter={() => setIsDeleteHovered(true)}
           onMouseLeave={() => setIsDeleteHovered(false)}

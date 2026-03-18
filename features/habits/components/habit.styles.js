@@ -10,7 +10,8 @@ export const getHabitSectionStyles = () => ({
   border: `1px solid ${colors.border}`,
   borderRadius: spacing.md,
   backgroundColor: colors.surface,
-  padding: `${spacing.xl}px`,
+  padding: `clamp(${spacing.md}px, 2vw, ${spacing.xl}px)`,
+  transition: "border-color 0.25s ease, box-shadow 0.25s ease",
 });
 
 export const getHabitHeadingStyles = () => ({
@@ -25,34 +26,39 @@ export const getHabitFormStyles = () => ({
   display: "flex",
   gap: `${spacing.sm}px`,
   width: "100%",
+  flexWrap: "wrap",
 });
 
-export const getHabitInputStyles = () => ({
+export const getHabitInputStyles = ({ isFocused = false }) => ({
   flex: 1,
-  minWidth: 0,
+  minWidth: `${spacing.xxl * 5}px`,
   border: `1px solid ${colors.border}`,
   borderRadius: spacing.sm,
-  backgroundColor: colors.background,
+  backgroundColor: isFocused ? colors.surface : colors.background,
   color: colors.text.primary,
   padding: `${spacing.sm}px ${spacing.md}px`,
   outline: "none",
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.medium,
   fontWeight: typography.fontWeights.regular,
-  transition: "border-color 0.2s ease, background-color 0.2s ease",
+  boxShadow: isFocused ? `0 0 0 ${spacing.xs}px ${colors.secondary}` : "none",
+  transition:
+    "border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease",
 });
 
-export const getHabitAddButtonStyles = ({ isHovered = false }) => ({
+export const getHabitAddButtonStyles = ({ isHovered = false, isPressed = false }) => ({
   border: `1px solid ${colors.primary}`,
   borderRadius: spacing.sm,
   backgroundColor: isHovered ? colors.secondary : colors.primary,
   color: colors.background,
   padding: `${spacing.sm}px ${spacing.lg}px`,
+  minWidth: `${spacing.xxl * 2}px`,
   cursor: "pointer",
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.medium,
   fontWeight: typography.fontWeights.medium,
-  transition: "background-color 0.2s ease",
+  transform: isPressed ? "scale(0.98)" : isHovered ? "translateY(-1px)" : "none",
+  transition: "background-color 0.25s ease, transform 0.2s ease",
 });
 
 export const getHabitListStyles = () => ({
@@ -64,7 +70,12 @@ export const getHabitListStyles = () => ({
   gap: `${spacing.sm}px`,
 });
 
-export const getHabitItemStyles = ({ isHovered = false, completedToday = false }) => ({
+export const getHabitItemStyles = ({
+  isHovered = false,
+  completedToday = false,
+  isMounted = true,
+  isRemoving = false,
+}) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
@@ -73,7 +84,10 @@ export const getHabitItemStyles = ({ isHovered = false, completedToday = false }
   borderRadius: spacing.sm,
   backgroundColor: isHovered ? colors.background : colors.surface,
   padding: `${spacing.sm}px ${spacing.md}px`,
-  transition: "background-color 0.2s ease, border-color 0.2s ease",
+  opacity: isRemoving ? 0 : isMounted ? 1 : 0,
+  transform: isRemoving ? "translateX(10px) scale(0.98)" : isMounted ? "translateX(0)" : "translateX(-8px)",
+  transition:
+    "background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease, transform 0.25s ease",
 });
 
 export const getHabitLeftContentStyles = () => ({
@@ -108,6 +122,7 @@ export const getStreakBadgeStyles = ({ streak = 0 }) => ({
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.small,
   fontWeight: typography.fontWeights.medium,
+  transition: "background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease",
 });
 
 export const getHabitActionsStyles = () => ({
@@ -132,7 +147,8 @@ export const getHabitToggleButtonStyles = ({ completedToday = false, isHovered =
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.small,
   fontWeight: typography.fontWeights.medium,
-  transition: "background-color 0.2s ease, border-color 0.2s ease",
+  transform: isHovered ? "translateY(-1px)" : "none",
+  transition: "background-color 0.25s ease, border-color 0.25s ease, transform 0.2s ease",
 });
 
 export const getHabitDeleteButtonStyles = ({ isHovered = false }) => ({
@@ -145,7 +161,8 @@ export const getHabitDeleteButtonStyles = ({ isHovered = false }) => ({
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.small,
   fontWeight: typography.fontWeights.medium,
-  transition: "background-color 0.2s ease, color 0.2s ease",
+  transform: isHovered ? "translateY(-1px)" : "none",
+  transition: "background-color 0.25s ease, color 0.25s ease, transform 0.2s ease",
 });
 
 export const getHabitEmptyStateStyles = () => ({

@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  getSidebarBrandStyles,
+  getSidebarHeaderStyles,
   getSidebarStyles,
-  getSidebarTitleStyles,
   getSidebarListStyles,
   getSidebarItemStyles,
+  getSidebarToggleStyles,
 } from "./sidebar.styles";
 
 const menuItems = [
@@ -16,9 +18,18 @@ const menuItems = [
   "Analytics",
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isCompact = false }) => {
   const [activeItem, setActiveItem] = useState("Dashboard");
   const [hoveredItem, setHoveredItem] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!isCompact) {
+      setIsExpanded(false);
+    }
+  }, [isCompact]);
+
+  const showLabels = !isCompact || isExpanded;
 
   const handleItemClick = (item) => {
     setActiveItem(item);
@@ -26,10 +37,21 @@ const Sidebar = () => {
   };
 
   return (
-    <aside style={getSidebarStyles()}>
-      <h2 style={getSidebarTitleStyles()}>LifeOS</h2>
+    <aside style={getSidebarStyles({ isCompact, isExpanded })}>
+      <div style={getSidebarHeaderStyles()}>
+        <h2 style={getSidebarBrandStyles({ showLabels })}>{showLabels ? "LifeOS" : "LO"}</h2>
+        {isCompact ? (
+          <button
+            type="button"
+            style={getSidebarToggleStyles({ isExpanded })}
+            onClick={() => setIsExpanded((previousExpanded) => !previousExpanded)}
+          >
+            {isExpanded ? "Collapse" : "Expand"}
+          </button>
+        ) : null}
+      </div>
       <nav>
-        <ul style={getSidebarListStyles()}>
+        <ul style={getSidebarListStyles({ showLabels })}>
           {menuItems.map((item) => (
             <li key={item}>
               <button
@@ -40,9 +62,10 @@ const Sidebar = () => {
                 style={getSidebarItemStyles({
                   isActive: activeItem === item,
                   isHovered: hoveredItem === item,
+                  showLabels,
                 })}
               >
-                {item}
+                {showLabels ? item : item[0]}
               </button>
             </li>
           ))}

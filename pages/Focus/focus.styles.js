@@ -10,8 +10,8 @@ export const getFocusPageStyles = () => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: `${spacing.xl}px`,
-  padding: `${spacing.xl}px`,
+  gap: `clamp(${spacing.md}px, 2vw, ${spacing.xl}px)`,
+  padding: `clamp(${spacing.md}px, 3vw, ${spacing.xl}px)`,
   boxSizing: "border-box",
 });
 
@@ -19,7 +19,7 @@ export const getFocusHeaderStyles = () => ({
   margin: 0,
   color: colors.text.primary,
   fontFamily: typography.fontFamily,
-  fontSize: typography.fontSizes.heading,
+  fontSize: `clamp(${typography.fontSizes.xl}px, 3vw, ${typography.fontSizes.heading}px)`,
   fontWeight: typography.fontWeights.bold,
   textAlign: "center",
 });
@@ -38,5 +38,5 @@ export const getFocusTimerShellStyles = () => ({
   maxWidth: `${spacing.xxl * 16}px`,
   display: "flex",
   flexDirection: "column",
-  gap: `${spacing.md}px`,
+  gap: `clamp(${spacing.sm}px, 2vw, ${spacing.md}px)`,
 });

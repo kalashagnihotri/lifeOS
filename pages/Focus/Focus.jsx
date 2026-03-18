@@ -34,7 +34,7 @@ const Focus = () => {
         </p>
 
         <div style={getFocusTimerShellStyles()}>
-          <TimerDisplay timeLeft={timeLeft} />
+          <TimerDisplay timeLeft={timeLeft} isRunning={isRunning} />
           <TimerControls
             isRunning={isRunning}
             startTimer={startTimer}

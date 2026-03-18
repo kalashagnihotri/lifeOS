@@ -16,12 +16,18 @@ export const getLabelStyles = () => ({
   fontWeight: typography.fontWeights.medium,
 });
 
-export const getInputStyles = ({ isFocused = false, hasError = false }) => {
+export const getInputStyles = ({
+  isFocused = false,
+  isHovered = false,
+  hasError = false,
+}) => {
   const borderColor = hasError
     ? colors.error
     : isFocused
       ? colors.primary
-      : colors.border;
+      : isHovered
+        ? colors.text.muted
+        : colors.border;
 
   return {
     width: "100%",
@@ -31,10 +37,11 @@ export const getInputStyles = ({ isFocused = false, hasError = false }) => {
     borderRadius: 6,
     padding: `${spacing.sm}px ${spacing.md}px`,
     outline: "none",
+    boxShadow: isFocused ? `0 0 0 ${spacing.xs}px ${colors.secondary}` : "none",
     fontFamily: typography.fontFamily,
     fontSize: typography.fontSizes.medium,
     fontWeight: typography.fontWeights.regular,
-    transition: "border-color 0.2s ease",
+    transition: "border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease",
   };
 };
 

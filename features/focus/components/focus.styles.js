@@ -3,7 +3,7 @@ import theme from "../../../core/theme";
 const colors = theme.colors.dark;
 const { spacing, typography } = theme;
 
-export const getTimerCardStyles = () => ({
+export const getTimerCardStyles = ({ isRunning = false }) => ({
   border: `1px solid ${colors.border}`,
   borderRadius: spacing.lg,
   backgroundColor: colors.surface,
@@ -12,7 +12,9 @@ export const getTimerCardStyles = () => ({
   flexDirection: "column",
   alignItems: "center",
   gap: `${spacing.lg}px`,
-  transition: "border-color 0.2s ease, transform 0.2s ease",
+  transform: isRunning ? "scale(1.01)" : "none",
+  boxShadow: isRunning ? `0 0 0 ${spacing.xs}px ${colors.primary}` : "none",
+  transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
 });
 
 export const getTimerLabelStyles = () => ({
@@ -25,14 +27,15 @@ export const getTimerLabelStyles = () => ({
   textTransform: "uppercase",
 });
 
-export const getTimerDisplayStyles = () => ({
+export const getTimerDisplayStyles = ({ isRunning = false }) => ({
   margin: 0,
-  color: colors.text.primary,
+  color: isRunning ? colors.primary : colors.text.primary,
   fontFamily: typography.fontFamily,
-  fontSize: `${spacing.xxl * 2}px`,
+  fontSize: `clamp(${typography.fontSizes.heading}px, 8vw, ${spacing.xxl * 2}px)`,
   fontWeight: typography.fontWeights.bold,
   lineHeight: 1,
   letterSpacing: "0.04em",
+  transition: "color 0.25s ease, transform 0.25s ease",
 });
 
 export const getTimerControlsStyles = () => ({
@@ -51,6 +54,7 @@ export const getSessionSectionStyles = () => ({
   display: "flex",
   flexDirection: "column",
   gap: `${spacing.md}px`,
+  transition: "border-color 0.25s ease",
 });
 
 export const getSessionTitleStyles = () => ({
@@ -79,6 +83,7 @@ export const getSessionItemStyles = () => ({
   borderRadius: spacing.sm,
   padding: `${spacing.sm}px ${spacing.md}px`,
   backgroundColor: colors.background,
+  transition: "background-color 0.25s ease, transform 0.2s ease",
 });
 
 export const getSessionDurationStyles = () => ({

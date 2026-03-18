@@ -6,7 +6,9 @@ const { spacing, typography } = theme;
 export const getStatCardContainerStyles = () => ({
   display: "flex",
   flexDirection: "column",
-  gap: `${spacing.xs}px`,
+  gap: `${spacing.sm}px`,
+  minHeight: `${spacing.xxl * 3}px`,
+  justifyContent: "space-between",
 });
 
 export const getStatCardTitleStyles = () => ({
@@ -21,9 +23,10 @@ export const getStatCardValueStyles = () => ({
   margin: 0,
   color: colors.text.primary,
   fontFamily: typography.fontFamily,
-  fontSize: typography.fontSizes.heading,
+  fontSize: `clamp(${typography.fontSizes.xl}px, 3.5vw, ${typography.fontSizes.heading}px)`,
   fontWeight: typography.fontWeights.bold,
   lineHeight: 1,
+  letterSpacing: "0.01em",
 });
 
 export const getStatCardDescriptionStyles = () => ({

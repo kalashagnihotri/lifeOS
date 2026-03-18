@@ -44,6 +44,7 @@ const getTaskItemStyles = () => ({
   border: `1px solid ${colors.border}`,
   borderRadius: spacing.sm,
   backgroundColor: colors.background,
+  transition: "transform 0.2s ease, border-color 0.25s ease, background-color 0.25s ease",
 });
 
 const getTaskTitleStyles = () => ({
@@ -52,6 +53,7 @@ const getTaskTitleStyles = () => ({
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.medium,
   fontWeight: typography.fontWeights.regular,
+  transition: "color 0.25s ease",
 });
 
 const getTaskStatusStyles = ({ isCompleted }) => ({
@@ -61,6 +63,7 @@ const getTaskStatusStyles = ({ isCompleted }) => ({
   fontSize: typography.fontSizes.small,
   fontWeight: typography.fontWeights.medium,
   textTransform: "capitalize",
+  letterSpacing: "0.02em",
 });
 
 const TaskSummary = () => {
@@ -74,7 +77,15 @@ const TaskSummary = () => {
 
             return (
               <li key={task.id} style={getTaskItemStyles()}>
-                <p style={getTaskTitleStyles()}>{task.title}</p>
+                <p
+                  style={{
+                    ...getTaskTitleStyles(),
+                    textDecoration: isCompleted ? "line-through" : "none",
+                    opacity: isCompleted ? 0.72 : 1,
+                  }}
+                >
+                  {task.title}
+                </p>
                 <p style={getTaskStatusStyles({ isCompleted })}>{task.status}</p>
               </li>
             );

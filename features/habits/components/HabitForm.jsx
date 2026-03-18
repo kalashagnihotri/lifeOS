@@ -8,6 +8,8 @@ import {
 const HabitForm = ({ onAddHabit }) => {
   const [title, setTitle] = useState("");
   const [isAddHovered, setIsAddHovered] = useState(false);
+  const [isAddPressed, setIsAddPressed] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -26,13 +28,18 @@ const HabitForm = ({ onAddHabit }) => {
         value={title}
         onChange={(event) => setTitle(event.target.value)}
         placeholder="Add a new habit"
-        style={getHabitInputStyles()}
+        style={getHabitInputStyles({ isFocused: isInputFocused })}
+        onFocus={() => setIsInputFocused(true)}
+        onBlur={() => setIsInputFocused(false)}
       />
       <button
         type="submit"
-        style={getHabitAddButtonStyles({ isHovered: isAddHovered })}
+        style={getHabitAddButtonStyles({ isHovered: isAddHovered, isPressed: isAddPressed })}
         onMouseEnter={() => setIsAddHovered(true)}
         onMouseLeave={() => setIsAddHovered(false)}
+        onMouseDown={() => setIsAddPressed(true)}
+        onMouseUp={() => setIsAddPressed(false)}
+        onBlur={() => setIsAddPressed(false)}
       >
         Add
       </button>

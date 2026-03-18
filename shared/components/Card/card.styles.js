@@ -1,6 +1,10 @@
 import theme from "../../../core/theme";
 
-const colors = theme.colors.light;
+const colorsByScheme = {
+  light: theme.colors.light,
+  dark: theme.colors.dark,
+};
+const defaultColors = colorsByScheme.light;
 const { spacing } = theme;
 
 const hexToRgba = (hex, alpha) => {
@@ -14,19 +18,37 @@ const hexToRgba = (hex, alpha) => {
 
 const elevationShadows = {
   0: "none",
-  1: `0 1px 3px ${hexToRgba(colors.text.primary, 0.08)}`,
-  2: `0 4px 8px ${hexToRgba(colors.text.primary, 0.12)}`,
-  3: `0 8px 16px ${hexToRgba(colors.text.primary, 0.16)}`,
+  1: `0 1px 3px ${hexToRgba(defaultColors.text.primary, 0.08)}`,
+  2: `0 4px 8px ${hexToRgba(defaultColors.text.primary, 0.12)}`,
+  3: `0 8px 16px ${hexToRgba(defaultColors.text.primary, 0.16)}`,
 };
 
-export const getCardStyles = ({ padding = "md", elevation = 0 }) => {
+export const getCardStyles = ({
+  padding = "md",
+  elevation = 0,
+  scheme = "light",
+  isHovered = false,
+}) => {
+  const selectedColors = colorsByScheme[scheme] || colorsByScheme.light;
+  const shadowTint =
+    scheme === "dark"
+      ? hexToRgba(selectedColors.text.primary, 0.12)
+      : hexToRgba(selectedColors.text.primary, 0.18);
+  const dynamicShadows = {
+    ...elevationShadows,
+    1: `0 2px 6px ${shadowTint}`,
+    2: `0 8px 18px ${shadowTint}`,
+    3: `0 12px 24px ${shadowTint}`,
+  };
   const paddingValue = typeof padding === "number" ? padding : spacing[padding] || spacing.md;
 
   return {
-    backgroundColor: colors.surface,
-    border: `1px solid ${colors.border}`,
+    backgroundColor: selectedColors.surface,
+    border: `1px solid ${selectedColors.border}`,
     borderRadius: 8,
     padding: `${paddingValue}px`,
-    boxShadow: elevationShadows[elevation] || elevationShadows[0],
+    boxShadow: dynamicShadows[elevation] || dynamicShadows[0],
+    transform: isHovered ? "translateY(-2px)" : "none",
+    transition: "transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease",
   };
 };

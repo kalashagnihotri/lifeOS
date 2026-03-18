@@ -9,8 +9,8 @@ export const getInsightsPageStyles = () => ({
   backgroundColor: colors.background,
   display: "flex",
   flexDirection: "column",
-  gap: `${spacing.xl}px`,
-  padding: `${spacing.xl}px`,
+  gap: `clamp(${spacing.md}px, 2vw, ${spacing.xl}px)`,
+  padding: `clamp(${spacing.md}px, 3vw, ${spacing.xl}px)`,
   boxSizing: "border-box",
 });
 
@@ -18,7 +18,7 @@ export const getInsightsHeaderStyles = () => ({
   margin: 0,
   color: colors.text.primary,
   fontFamily: typography.fontFamily,
-  fontSize: typography.fontSizes.heading,
+  fontSize: `clamp(${typography.fontSizes.xl}px, 3vw, ${typography.fontSizes.heading}px)`,
   fontWeight: typography.fontWeights.bold,
 });
 
