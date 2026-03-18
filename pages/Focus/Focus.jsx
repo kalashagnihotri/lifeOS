@@ -33,7 +33,16 @@ const Focus = () => {
     };
   }, []);
 
-  const { timeLeft, isRunning, startTimer, pauseTimer, resetTimer } = useFocusTimer({
+  const {
+    timeLeft,
+    isRunning,
+    currentMode,
+    completedFocusSessions,
+    selectMode,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+  } = useFocusTimer({
     onSessionComplete: (updatedSessions) => {
       setSessions(updatedSessions);
     },
@@ -44,13 +53,20 @@ const Focus = () => {
       <section style={getFocusPageStyles()}>
         <h1 style={getFocusHeaderStyles()}>Focus</h1>
         <p style={getFocusSubHeaderStyles()}>
-          Stay in deep work mode with a simple 25-minute focus cycle.
+          Run a full Pomodoro cycle with focus blocks, short breaks, and long breaks.
         </p>
 
         <div style={getFocusTimerShellStyles()}>
-          <TimerDisplay timeLeft={timeLeft} isRunning={isRunning} />
+          <TimerDisplay
+            timeLeft={timeLeft}
+            isRunning={isRunning}
+            currentMode={currentMode}
+            completedFocusSessions={completedFocusSessions}
+          />
           <TimerControls
             isRunning={isRunning}
+            currentMode={currentMode}
+            selectMode={selectMode}
             startTimer={startTimer}
             pauseTimer={pauseTimer}
             resetTimer={resetTimer}

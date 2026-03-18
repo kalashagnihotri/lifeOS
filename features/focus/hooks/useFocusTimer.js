@@ -3,10 +3,19 @@ import { addSession } from "../services/focusService";
 import { minutesToSeconds } from "../utils/timeUtils";
 import { notify } from "../../../shared/utils/notify";
 
-const DEFAULT_SESSION_MINUTES = 25;
+const POMODORO_MINUTES = {
+  focus: 25,
+  shortBreak: 5,
+  longBreak: 15,
+};
+const SESSIONS_PER_LONG_BREAK = 4;
 
-const useFocusTimer = ({ sessionMinutes = DEFAULT_SESSION_MINUTES, onSessionComplete } = {}) => {
-  const totalSeconds = useMemo(() => minutesToSeconds(sessionMinutes), [sessionMinutes]);
+const useFocusTimer = ({ onSessionComplete } = {}) => {
+  const [currentMode, setCurrentMode] = useState("focus");
+  const [completedFocusSessions, setCompletedFocusSessions] = useState(0);
+  const totalSeconds = useMemo(() => {
+    return minutesToSeconds(POMODORO_MINUTES[currentMode]);
+  }, [currentMode]);
   const [timeLeft, setTimeLeft] = useState(totalSeconds);
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef(null);
@@ -32,6 +41,53 @@ const useFocusTimer = ({ sessionMinutes = DEFAULT_SESSION_MINUTES, onSessionComp
       return;
     }
 
+    const handleTimerCompletion = () => {
+      setIsRunning(false);
+
+      if (currentMode === "focus") {
+        const focusMinutes = POMODORO_MINUTES.focus;
+
+        addSession({ duration: focusMinutes })
+          .then((result) => {
+            if (typeof onSessionComplete === "function") {
+              onSessionComplete(result.sessions, result.newSession);
+            }
+
+            notify({
+              title: "Focus complete",
+              message: `${focusMinutes} minutes logged. Break time.`,
+              type: "success",
+            });
+          })
+          .catch(() => {
+            notify({
+              title: "Session save failed",
+              message: "Focus session finished but could not be saved.",
+              type: "error",
+            });
+          });
+
+        setCompletedFocusSessions((previousCount) => {
+          const nextCount = previousCount + 1;
+          const shouldTakeLongBreak = nextCount % SESSIONS_PER_LONG_BREAK === 0;
+          const nextMode = shouldTakeLongBreak ? "longBreak" : "shortBreak";
+          setCurrentMode(nextMode);
+
+          return nextCount;
+        });
+
+        return;
+      }
+
+      setCurrentMode("focus");
+
+      notify({
+        title: "Break complete",
+        message: "Ready for the next focus session.",
+        type: "info",
+      });
+    };
+
     intervalRef.current = setInterval(() => {
       setTimeLeft((previousTimeLeft) => {
         if (previousTimeLeft <= 1) {
@@ -40,27 +96,7 @@ const useFocusTimer = ({ sessionMinutes = DEFAULT_SESSION_MINUTES, onSessionComp
             intervalRef.current = null;
           }
 
-          setIsRunning(false);
-
-          addSession({ duration: sessionMinutes })
-            .then((result) => {
-              if (typeof onSessionComplete === "function") {
-                onSessionComplete(result.sessions, result.newSession);
-              }
-
-              notify({
-                title: "Session complete",
-                message: `${sessionMinutes} minutes logged to your focus history.`,
-                type: "success",
-              });
-            })
-            .catch(() => {
-              notify({
-                title: "Session save failed",
-                message: "Focus session finished but could not be saved.",
-                type: "error",
-              });
-            });
+          handleTimerCompletion();
 
           return 0;
         }
@@ -75,7 +111,16 @@ const useFocusTimer = ({ sessionMinutes = DEFAULT_SESSION_MINUTES, onSessionComp
         intervalRef.current = null;
       }
     };
-  }, [isRunning, onSessionComplete, sessionMinutes]);
+  }, [currentMode, isRunning, onSessionComplete]);
+
+  const selectMode = (mode) => {
+    if (!POMODORO_MINUTES[mode]) {
+      return;
+    }
+
+    setIsRunning(false);
+    setCurrentMode(mode);
+  };
 
   const startTimer = () => {
     if (timeLeft <= 0) {
@@ -97,6 +142,9 @@ const useFocusTimer = ({ sessionMinutes = DEFAULT_SESSION_MINUTES, onSessionComp
   return {
     timeLeft,
     isRunning,
+    currentMode,
+    completedFocusSessions,
+    selectMode,
     startTimer,
     pauseTimer,
     resetTimer,

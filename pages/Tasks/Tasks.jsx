@@ -1,6 +1,7 @@
 import MainLayout from "../../layouts/MainLayout/MainLayout";
 import TaskForm from "../../features/tasks/components/TaskForm";
 import TaskList from "../../features/tasks/components/TaskList";
+import TaskToolbar from "../../features/tasks/components/TaskToolbar";
 import useTasks from "../../features/tasks/hooks/useTasks";
 import {
   getTasksHeaderStyles,
@@ -13,7 +14,16 @@ import {
 } from "../../features/tasks/components/task.styles";
 
 const Tasks = () => {
-  const { tasks, addTask, toggleTask, deleteTask } = useTasks();
+  const {
+    groupedTasks,
+    filter,
+    setFilter,
+    searchQuery,
+    setSearchQuery,
+    addTask,
+    toggleTask,
+    deleteTask,
+  } = useTasks();
 
   return (
     <MainLayout>
@@ -26,7 +36,13 @@ const Tasks = () => {
         <div style={getTaskSectionStyles()}>
           <h2 style={getTaskHeadingStyles()}>My Task List</h2>
           <TaskForm onAddTask={addTask} />
-          <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} />
+          <TaskToolbar
+            filter={filter}
+            onFilterChange={setFilter}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
+          <TaskList groupedTasks={groupedTasks} onToggle={toggleTask} onDelete={deleteTask} />
         </div>
       </section>
     </MainLayout>

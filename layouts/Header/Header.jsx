@@ -10,11 +10,16 @@ import Button from "../../shared/components/Button/Button";
 import { notify } from "../../shared/utils/notify";
 
 const OPEN_TASK_COMPOSER_EVENT = "lifeos:open-task-composer";
+const OPEN_TASK_COMPOSER_FLAG = "lifeos.pendingOpenTaskComposer";
 
 const Header = ({ isCompact = false }) => {
   const handleAddTaskClick = () => {
+    if (typeof window !== "undefined") {
+      window.sessionStorage.setItem(OPEN_TASK_COMPOSER_FLAG, String(Date.now()));
+    }
+
     if (window.location.hash !== "#/tasks") {
-      window.location.assign("#/tasks");
+      window.location.hash = "#/tasks";
     }
 
     window.setTimeout(() => {
@@ -44,7 +49,6 @@ const Header = ({ isCompact = false }) => {
         </span>
       </h1>
       <div style={getHeaderRightStyles({ isCompact })}>
-        {isCompact ? null : <span>Alex User</span>}
         <Button
           label={isCompact ? "+ Add" : "+ Add Task"}
           variant="primary"

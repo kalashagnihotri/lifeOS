@@ -1,40 +1,55 @@
-import { addDoc, collection, deleteDoc, doc, getDocs } from "firebase/firestore";
-import { db } from "../../../core/firebase/firestore";
 import { getCurrentUser } from "../../auth/services/authService";
 
-const getSessionCollectionRef = () => {
+const getSessionStorageKey = () => {
   const user = getCurrentUser();
 
   if (!user) {
     return null;
   }
 
-  return collection(db, "users", user.uid, "sessions");
+  return `lifeos.localdb.${user.uid}.sessions`;
 };
 
-const mapSession = (sessionDoc) => ({
-  id: sessionDoc.id,
-  ...sessionDoc.data(),
-});
+const readSessions = () => {
+  const storageKey = getSessionStorageKey();
 
-export const getSessions = async () => {
-  const sessionCollectionRef = getSessionCollectionRef();
-
-  if (!sessionCollectionRef) {
+  if (!storageKey || typeof window === "undefined") {
     return [];
   }
 
-  const snapshot = await getDocs(sessionCollectionRef);
+  const rawValue = window.localStorage.getItem(storageKey);
 
-  return snapshot.docs
-    .map(mapSession)
+  if (!rawValue) {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(rawValue);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeSessions = (sessions) => {
+  const storageKey = getSessionStorageKey();
+
+  if (!storageKey || typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(storageKey, JSON.stringify(sessions));
+};
+
+export const getSessions = async () => {
+  return readSessions()
     .sort((firstSession, secondSession) => (secondSession.completedAt || "").localeCompare(firstSession.completedAt || ""));
 };
 
 export const addSession = async (session) => {
-  const sessionCollectionRef = getSessionCollectionRef();
+  const existingSessions = await getSessions();
 
-  if (!sessionCollectionRef) {
+  if (!getSessionStorageKey()) {
     return {
       newSession: null,
       sessions: [],
@@ -42,38 +57,22 @@ export const addSession = async (session) => {
   }
 
   const completedAt = new Date().toISOString();
-  const createdRef = await addDoc(sessionCollectionRef, {
+  const newSession = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
     duration: session.duration,
     completedAt,
-  });
-
+  };
+  writeSessions([newSession, ...existingSessions]);
   const sessions = await getSessions();
 
   return {
-    newSession: {
-      id: createdRef.id,
-      duration: session.duration,
-      completedAt,
-    },
+    newSession,
     sessions,
   };
 };
 
 export const clearSessions = async () => {
-  const user = getCurrentUser();
-
-  if (!user) {
-    return [];
-  }
-
-  const sessions = await getSessions();
-
-  await Promise.all(
-    sessions.map((session) => {
-      const sessionDocRef = doc(db, "users", user.uid, "sessions", session.id);
-      return deleteDoc(sessionDocRef);
-    })
-  );
+  writeSessions([]);
 
   return [];
 };

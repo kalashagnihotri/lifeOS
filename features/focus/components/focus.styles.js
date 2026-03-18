@@ -50,6 +50,39 @@ export const getTimerControlsStyles = () => ({
   flexWrap: "wrap",
 });
 
+export const getPomodoroModeSelectorStyles = () => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: `${spacing.xs}px`,
+  padding: `${spacing.xs}px`,
+  border: `1px solid ${colors.border}`,
+  borderRadius: spacing.md,
+  backgroundColor: "rgba(15, 17, 23, 0.7)",
+});
+
+export const getPomodoroModeButtonStyles = ({ isActive = false }) => ({
+  border: `1px solid ${isActive ? colors.primary : "transparent"}`,
+  borderRadius: spacing.sm,
+  backgroundColor: isActive ? "rgba(167, 176, 255, 0.2)" : "transparent",
+  color: isActive ? colors.text.primary : colors.text.secondary,
+  padding: `${spacing.xs}px ${spacing.sm}px`,
+  fontFamily: typography.fontFamily,
+  fontSize: typography.fontSizes.small,
+  fontWeight: typography.fontWeights.medium,
+  cursor: "pointer",
+  transition: "background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease",
+});
+
+export const getPomodoroMetaStyles = () => ({
+  margin: 0,
+  color: colors.text.secondary,
+  fontFamily: typography.fontFamily,
+  fontSize: typography.fontSizes.small,
+  fontWeight: typography.fontWeights.medium,
+  letterSpacing: "0.02em",
+});
+
 export const getSessionSectionStyles = () => ({
   border: `1px solid ${colors.border}`,
   borderRadius: spacing.lg,

@@ -2,11 +2,26 @@ import { useEffect, useRef, useState } from "react";
 import {
   getTaskCheckboxStyles,
   getTaskDeleteButtonStyles,
+  getTaskDueDateStyles,
   getTaskItemStyles,
+  getTaskMetaRowStyles,
   getTaskMainStyles,
-  getTaskStatusStyles,
+  getTaskPriorityBadgeStyles,
+  getTaskTitleBlockStyles,
   getTaskTitleStyles,
 } from "./task.styles";
+
+const formatDueDate = (dueDate) => {
+  if (!dueDate) {
+    return "No due date";
+  }
+
+  return new Date(`${dueDate}T00:00:00`).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
 
 const TaskItem = ({ task, onToggle, onDelete }) => {
   const [isItemHovered, setIsItemHovered] = useState(false);
@@ -28,6 +43,9 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
       }
     };
   }, []);
+
+  const today = new Date().toISOString().split("T")[0];
+  const isOverdue = Boolean(task.dueDate && !task.completed && task.dueDate < today);
 
   const handleDelete = () => {
     setIsRemoving(true);
@@ -54,17 +72,25 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
           onChange={() => onToggle(task.id)}
           style={getTaskCheckboxStyles()}
         />
-        <p style={getTaskTitleStyles({ completed: task.completed })}>{task.title}</p>
-      </div>
 
-      <p style={getTaskStatusStyles({ completed: task.completed })}>
-        {task.completed ? "completed" : "pending"}
-      </p>
+        <div style={getTaskTitleBlockStyles()}>
+          <p style={getTaskTitleStyles({ completed: task.completed })}>{task.title}</p>
+          <div style={getTaskMetaRowStyles()}>
+            <span style={getTaskPriorityBadgeStyles({ priority: task.priority })}>{task.priority}</span>
+            <span style={getTaskDueDateStyles({ isOverdue, completed: task.completed })}>
+              {isOverdue ? "Overdue" : "Due"}: {formatDueDate(task.dueDate)}
+            </span>
+          </div>
+        </div>
+      </div>
 
       <button
         type="button"
         onClick={handleDelete}
-        style={getTaskDeleteButtonStyles({ isHovered: isDeleteHovered })}
+        style={getTaskDeleteButtonStyles({
+          isHovered: isDeleteHovered,
+          isVisible: isItemHovered,
+        })}
         onMouseEnter={() => setIsDeleteHovered(true)}
         onMouseLeave={() => setIsDeleteHovered(false)}
       >
