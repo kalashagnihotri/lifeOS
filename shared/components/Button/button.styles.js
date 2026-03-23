@@ -14,22 +14,28 @@ const hexToRgba = (hex, alpha) => {
 
 const variantStyles = {
   primary: {
-    background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`,
-    color: colors.background,
-    border: `1px solid ${hexToRgba(colors.primary, 0.55)}`,
-    shadow: `0 8px 20px ${hexToRgba(colors.primary, 0.28)}`,
+    background: `linear-gradient(145deg, ${hexToRgba(colors.primary, 0.3)} 0%, ${hexToRgba(colors.secondary, 0.2)} 100%)`,
+    color: "#FFFFFF",
+    border: `1px solid ${hexToRgba(colors.outlineVariant || colors.border, 0.14)}`,
+    shadow: "0 18px 42px rgba(0, 0, 0, 0.42)",
   },
   secondary: {
-    background: hexToRgba(colors.surface, 0.7),
+    background: "rgba(31, 31, 31, 0.5)",
     color: colors.text.primary,
-    border: `1px solid ${hexToRgba(colors.border, 0.9)}`,
-    shadow: `0 6px 16px ${hexToRgba(colors.background, 0.4)}`,
+    border: `1px solid ${hexToRgba(colors.outlineVariant || colors.border, 0.12)}`,
+    shadow: "0 12px 28px rgba(0, 0, 0, 0.36)",
+  },
+  glass: {
+    background: "linear-gradient(135deg, rgba(42, 42, 42, 0.42) 0%, rgba(20, 20, 20, 0.55) 100%)",
+    color: "rgba(236, 236, 239, 0.94)",
+    border: `1px solid ${hexToRgba(colors.outlineVariant || colors.border, 0.12)}`,
+    shadow: "0 16px 36px rgba(0, 0, 0, 0.4)",
   },
   danger: {
-    background: hexToRgba(colors.error, 0.25),
+    background: hexToRgba(colors.error, 0.22),
     color: colors.error,
-    border: `1px solid ${hexToRgba(colors.error, 0.7)}`,
-    shadow: `0 6px 16px ${hexToRgba(colors.error, 0.25)}`,
+    border: `1px solid ${hexToRgba(colors.error, 0.3)}`,
+    shadow: "0 14px 30px rgba(0, 0, 0, 0.34)",
   },
 };
 
@@ -71,10 +77,10 @@ export const getButtonStyles = ({
     outline: "none",
     cursor: disabled ? "not-allowed" : "pointer",
     opacity: disabled ? 0.48 : 1,
-    filter: isHovered && !disabled ? "brightness(1.04)" : "none",
+    filter: isHovered && !disabled ? "brightness(1.05)" : "none",
     boxShadow:
       isFocused && !disabled
-        ? `0 0 0 ${spacing.xs}px ${hexToRgba(colors.secondary, 0.45)}, ${selectedVariant.shadow}`
+        ? `inset 0 0 0 1px ${hexToRgba(colors.primary, 0.2)}, 0 0 0 ${spacing.xs}px ${hexToRgba(colors.outlineVariant || colors.text.muted, 0.22)}, ${selectedVariant.shadow}`
         : selectedVariant.shadow,
     transform:
       disabled
@@ -85,7 +91,7 @@ export const getButtonStyles = ({
             ? "translateY(-1px) scale(1.02)"
             : "none",
     animation: !disabled && isPressed ? "lifeosClickMicro 180ms ease" : "none",
-    backdropFilter: "blur(8px)",
+    backdropFilter: "blur(20px)",
     transition:
       "background 0.28s ease, border-color 0.28s ease, opacity 0.28s ease, transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease",
   };

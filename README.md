@@ -39,7 +39,7 @@ Use `.env.example` as the template.
 ## Data Storage Mode
 
 - Authentication still uses Firebase Google Sign-In.
-- Tasks, habits, and focus sessions are currently stored in local browser storage (local DB mode) per signed-in user.
+- Tasks and focus sessions are currently stored in local browser storage (local DB mode) per signed-in user.
 - Firestore persistence is temporarily disabled.
 
 ## Run (Development)

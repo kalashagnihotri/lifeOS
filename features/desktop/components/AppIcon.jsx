@@ -7,14 +7,32 @@ import {
 
 const AppIcon = ({ label, icon: Icon, onOpen, onPointerDown, isDragging = false }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <button
       type="button"
-      style={getAppIconButtonStyles({ isHovered })}
+      style={getAppIconButtonStyles({ isHovered, isPressed, isFocused })}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onPointerDown={onPointerDown}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setIsPressed(false);
+      }}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => {
+        setIsFocused(false);
+        setIsPressed(false);
+      }}
+      onPointerDown={(event) => {
+        if (event.button === 0) {
+          setIsPressed(true);
+        }
+
+        onPointerDown?.(event);
+      }}
+      onPointerUp={() => setIsPressed(false)}
+      onPointerCancel={() => setIsPressed(false)}
       onClick={(event) => {
         event.preventDefault();
       }}
@@ -27,7 +45,7 @@ const AppIcon = ({ label, icon: Icon, onOpen, onPointerDown, isDragging = false 
       aria-label={`Open ${label}`}
       aria-grabbed={isDragging}
     >
-      <span style={getAppIconGlyphStyles({ isHovered })}>{Icon ? <Icon size={18} strokeWidth={2.1} /> : null}</span>
+      <span style={getAppIconGlyphStyles({ isHovered, isFocused })}>{Icon ? <Icon size={18} strokeWidth={2.1} /> : null}</span>
       <p style={getAppIconLabelStyles()}>{label}</p>
     </button>
   );

@@ -18,9 +18,9 @@ const hexToRgba = (hex, alpha) => {
 
 const elevationShadows = {
   0: "none",
-  1: `0 10px 22px ${hexToRgba(defaultColors.background, 0.4)}`,
-  2: `0 14px 30px ${hexToRgba(defaultColors.background, 0.48)}`,
-  3: `0 20px 36px ${hexToRgba(defaultColors.background, 0.56)}`,
+  1: `0 14px 34px ${hexToRgba(defaultColors.background, 0.4)}`,
+  2: `0 20px 44px ${hexToRgba(defaultColors.background, 0.48)}`,
+  3: `0 24px 56px ${hexToRgba(defaultColors.background, 0.56)}`,
 };
 
 export const getCardStyles = ({
@@ -43,13 +43,16 @@ export const getCardStyles = ({
   const paddingValue = typeof padding === "number" ? padding : spacing[padding] || spacing.md;
 
   return {
-    background: `linear-gradient(165deg, ${selectedColors.surface} 0%, ${hexToRgba(selectedColors.surface, 0.9)} 100%)`,
-    border: `1px solid ${hexToRgba(selectedColors.border, 0.95)}`,
+    background:
+      scheme === "dark"
+        ? "linear-gradient(168deg, rgba(31, 31, 31, 0.72) 0%, rgba(27, 27, 27, 0.68) 100%)"
+        : `linear-gradient(165deg, ${selectedColors.surface} 0%, ${hexToRgba(selectedColors.surface, 0.9)} 100%)`,
+    border: `1px solid ${hexToRgba(selectedColors.outlineVariant || selectedColors.border, scheme === "dark" ? 0.12 : 0.3)}`,
     borderRadius: spacing.md,
     padding: `${paddingValue}px`,
     boxShadow: dynamicShadows[elevation] || dynamicShadows[0],
     transform: isHovered ? "translateY(-3px)" : "none",
-    backdropFilter: "blur(10px)",
+    backdropFilter: "blur(24px)",
     transition: "transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease",
   };
 };

@@ -5,7 +5,7 @@ const { spacing, typography } = theme;
 
 const priorityColorByLevel = {
   low: "#8FB9A4",
-  medium: "#8FA8D8",
+  medium: "#9CA2B0",
   high: "#D5A0AC",
 };
 
@@ -109,7 +109,7 @@ export const getTaskFilterGroupStyles = () => ({
 export const getTaskFilterButtonStyles = ({ isActive = false }) => ({
   border: `1px solid ${isActive ? colors.primary : "transparent"}`,
   borderRadius: spacing.sm,
-  backgroundColor: isActive ? "rgba(167, 176, 255, 0.2)" : "transparent",
+  backgroundColor: isActive ? "rgba(184, 187, 196, 0.2)" : "transparent",
   color: isActive ? colors.text.primary : colors.text.secondary,
   padding: `${spacing.xs}px ${spacing.sm}px`,
   fontFamily: typography.fontFamily,
@@ -179,7 +179,7 @@ export const getTaskButtonStyles = ({ isHovered = false, isPressed = false }) =>
   fontSize: typography.fontSizes.medium,
   fontWeight: typography.fontWeights.medium,
   cursor: "pointer",
-  boxShadow: "0 10px 22px rgba(167, 176, 255, 0.26)",
+  boxShadow: "0 10px 22px rgba(183, 186, 194, 0.24)",
   transform: isPressed ? "translateY(0) scale(0.98)" : isHovered ? "translateY(-1px) scale(1.02)" : "none",
   transition: "background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease",
 });
@@ -194,16 +194,16 @@ export const getTaskListStyles = () => ({
 });
 
 export const getTaskDropZoneStyles = ({ isDragActive = false, isReceivingDrop = false }) => ({
-  border: `1px solid ${isReceivingDrop ? "rgba(167, 176, 255, 0.7)" : colors.border}`,
+  border: `1px solid ${isReceivingDrop ? "rgba(186, 189, 198, 0.62)" : colors.border}`,
   borderRadius: spacing.md,
   padding: `${spacing.sm}px`,
   background: isReceivingDrop
-    ? "linear-gradient(165deg, rgba(26, 35, 56, 0.94) 0%, rgba(17, 24, 39, 0.88) 100%)"
+    ? "linear-gradient(165deg, rgba(23, 24, 28, 0.94) 0%, rgba(15, 16, 20, 0.88) 100%)"
     : isDragActive
-      ? "linear-gradient(165deg, rgba(18, 25, 38, 0.84) 0%, rgba(13, 19, 32, 0.82) 100%)"
+      ? "linear-gradient(165deg, rgba(18, 19, 24, 0.84) 0%, rgba(12, 13, 17, 0.82) 100%)"
       : "transparent",
   boxShadow: isReceivingDrop
-    ? "0 0 0 1px rgba(167, 176, 255, 0.32), 0 14px 26px rgba(8, 10, 15, 0.34)"
+    ? "0 0 0 1px rgba(186, 189, 198, 0.28), 0 14px 26px rgba(8, 10, 15, 0.34)"
     : "none",
   transition: "border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease",
 });
@@ -250,10 +250,10 @@ export const getTaskItemStyles = ({
 });
 
 export const getTaskDragHandleStyles = ({ isDragging = false, isHovered = false }) => ({
-  border: `1px solid ${isHovered || isDragging ? "rgba(167, 176, 255, 0.75)" : colors.border}`,
+  border: `1px solid ${isHovered || isDragging ? "rgba(186, 189, 198, 0.72)" : colors.border}`,
   borderRadius: spacing.sm,
   backgroundColor:
-    isDragging || isHovered ? "rgba(167, 176, 255, 0.24)" : "rgba(15, 17, 23, 0.5)",
+    isDragging || isHovered ? "rgba(186, 189, 198, 0.22)" : "rgba(15, 17, 23, 0.5)",
   color: isDragging || isHovered ? colors.text.primary : colors.text.muted,
   width: `${spacing.xl}px`,
   height: `${spacing.xl}px`,
@@ -264,7 +264,7 @@ export const getTaskDragHandleStyles = ({ isDragging = false, isHovered = false 
   flexShrink: 0,
   marginTop: `${spacing.xs}px`,
   transform: isDragging ? "scale(1.07)" : isHovered ? "scale(1.03)" : "scale(1)",
-  boxShadow: isDragging ? "0 0 0 1px rgba(167, 176, 255, 0.35), 0 8px 14px rgba(8, 10, 15, 0.34)" : "none",
+  boxShadow: isDragging ? "0 0 0 1px rgba(186, 189, 198, 0.32), 0 8px 14px rgba(8, 10, 15, 0.34)" : "none",
   transition: "background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease",
 });
 
@@ -274,10 +274,10 @@ export const getTaskDragOverlayStyles = () => ({
   gap: `${spacing.sm}px`,
   maxWidth: "min(90vw, 680px)",
   borderRadius: spacing.md,
-  border: "1px solid rgba(167, 176, 255, 0.78)",
+  border: "1px solid rgba(186, 189, 198, 0.72)",
   padding: `${spacing.sm}px ${spacing.md}px`,
-  background: "linear-gradient(165deg, rgba(31, 41, 66, 0.98) 0%, rgba(20, 27, 41, 0.96) 100%)",
-  boxShadow: "0 28px 40px rgba(8, 10, 15, 0.56), 0 0 0 1px rgba(167, 176, 255, 0.24)",
+  background: "linear-gradient(165deg, rgba(24, 25, 30, 0.98) 0%, rgba(14, 15, 19, 0.96) 100%)",
+  boxShadow: "0 28px 40px rgba(8, 10, 15, 0.56), 0 0 0 1px rgba(186, 189, 198, 0.22)",
   transform: "rotate(-0.75deg) scale(1.01)",
   color: colors.text.primary,
 });

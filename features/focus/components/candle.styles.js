@@ -28,7 +28,7 @@ export const getCandleSceneStyles = ({ width = 164, height = 220, isZenMode = fa
   justifyContent: "center",
   background: isZenMode
     ? "transparent"
-    : "radial-gradient(circle at 50% 10%, rgba(167, 176, 255, 0.12) 0%, rgba(15, 17, 23, 0) 42%), rgba(11, 13, 18, 0.55)",
+    : "radial-gradient(circle at 50% 10%, rgba(198, 201, 208, 0.1) 0%, rgba(15, 17, 23, 0) 42%), rgba(11, 13, 18, 0.55)",
   border: "none",
   boxShadow: isZenMode ? "none" : "inset 0 0 18px rgba(8, 10, 15, 0.36)",
   overflow: "hidden",

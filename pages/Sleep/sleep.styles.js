@@ -7,7 +7,7 @@ export const getSleepPageStyles = () => ({
   minHeight: "100%",
   width: "100%",
   background:
-    "radial-gradient(circle at 8% 10%, rgba(66, 214, 195, 0.18) 0%, rgba(15, 17, 23, 0) 36%), radial-gradient(circle at 92% 2%, rgba(255, 189, 89, 0.16) 0%, rgba(15, 17, 23, 0) 44%), #0f1117",
+    "radial-gradient(circle at 8% 10%, rgba(196, 198, 205, 0.12) 0%, rgba(15, 17, 23, 0) 36%), radial-gradient(circle at 92% 2%, rgba(122, 124, 132, 0.1) 0%, rgba(15, 17, 23, 0) 44%), #070708",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -56,10 +56,10 @@ export const getSleepHeroMetaStyles = () => ({
 
 export const getSleepHeroClockStyles = () => ({
   margin: 0,
-  border: `1px solid rgba(66, 214, 195, 0.4)`,
+  border: `1px solid rgba(194, 197, 205, 0.32)`,
   borderRadius: spacing.md,
   background: "rgba(9, 18, 24, 0.75)",
-  color: "#9ef4e5",
+  color: "#d8d9de",
   padding: `${spacing.xs}px ${spacing.md}px`,
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.medium,
@@ -127,9 +127,9 @@ export const getSleepInputStyles = () => ({
 export const getSleepInsightStyles = () => ({
   width: "min(920px, 100%)",
   borderRadius: spacing.lg,
-  border: "1px solid rgba(66, 214, 195, 0.28)",
+  border: "1px solid rgba(186, 189, 198, 0.24)",
   background:
-    "linear-gradient(120deg, rgba(14, 30, 37, 0.86) 0%, rgba(17, 21, 33, 0.9) 58%, rgba(41, 30, 18, 0.84) 100%)",
+    "linear-gradient(120deg, rgba(18, 18, 22, 0.9) 0%, rgba(14, 15, 19, 0.92) 58%, rgba(23, 22, 20, 0.88) 100%)",
   padding: `${spacing.lg}px`,
   boxSizing: "border-box",
   display: "flex",
@@ -139,7 +139,7 @@ export const getSleepInsightStyles = () => ({
 
 export const getSleepInsightTitleStyles = () => ({
   margin: 0,
-  color: "rgba(158, 244, 229, 0.82)",
+  color: "rgba(201, 204, 212, 0.82)",
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.small,
   fontWeight: typography.fontWeights.medium,

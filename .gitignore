@@ -2,6 +2,7 @@
 /.github
 /.vscode
 /.idea
+/UI
 
 # Node and build outputs
 /node_modules

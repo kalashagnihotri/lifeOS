@@ -21,15 +21,15 @@ export const getHeaderStyles = ({ isCompact = false }) => ({
   alignItems: "center",
   justifyContent: "space-between",
   padding: `0 ${isCompact ? spacing.md : spacing.xl}px`,
-  background: `linear-gradient(145deg, ${hexToRgba(colors.surface, 0.7)} 0%, ${hexToRgba(colors.surface, 0.52)} 60%, ${hexToRgba(colors.background, 0.42)} 100%)`,
-  borderBottom: `1px solid ${hexToRgba(colors.border, 0.65)}`,
+  background: `linear-gradient(145deg, rgba(31, 31, 31, 0.58) 0%, rgba(27, 27, 27, 0.5) 60%, rgba(19, 19, 19, 0.42) 100%)`,
+  borderBottom: `1px solid ${hexToRgba(colors.outlineVariant || colors.border, 0.12)}`,
   position: "sticky",
   top: 0,
   zIndex: 5,
   boxSizing: "border-box",
   overflow: "hidden",
-  backdropFilter: "blur(18px) saturate(140%)",
-  boxShadow: `0 10px 28px ${hexToRgba(colors.background, 0.35)}, inset 0 1px 0 ${hexToRgba(colors.text.primary, 0.06)}`,
+  backdropFilter: "blur(24px) saturate(132%)",
+  boxShadow: `0 16px 40px ${hexToRgba(colors.background, 0.42)}, inset 0 1px 0 ${hexToRgba(colors.text.primary, 0.1)}`,
   transition: "padding 0.25s ease, border-color 0.25s ease",
 });
 
@@ -38,7 +38,7 @@ export const getHeaderAccentStyles = () => ({
   inset: 0,
   pointerEvents: "none",
   background:
-    "radial-gradient(circle at 14% -30%, rgba(133, 207, 232, 0.2) 0%, rgba(133, 207, 232, 0) 45%), radial-gradient(circle at 88% -20%, rgba(167, 176, 255, 0.16) 0%, rgba(167, 176, 255, 0) 46%)",
+    "radial-gradient(circle at 14% -30%, rgba(216, 216, 220, 0.14) 0%, rgba(216, 216, 220, 0) 45%), radial-gradient(circle at 88% -20%, rgba(176, 176, 182, 0.12) 0%, rgba(176, 176, 182, 0) 46%)",
 });
 
 export const getHeaderBottomGlowStyles = () => ({
@@ -48,16 +48,16 @@ export const getHeaderBottomGlowStyles = () => ({
   bottom: 0,
   height: "1px",
   pointerEvents: "none",
-  background: "linear-gradient(90deg, rgba(133, 207, 232, 0) 0%, rgba(133, 207, 232, 0.42) 50%, rgba(167, 176, 255, 0) 100%)",
+  background: "linear-gradient(90deg, rgba(200, 200, 205, 0) 0%, rgba(200, 200, 205, 0.3) 50%, rgba(200, 200, 205, 0) 100%)",
 });
 
 export const getHeaderBrandStyles = ({ isCompact = false }) => ({
   margin: 0,
   color: colors.text.primary,
-  fontFamily: typography.fontFamily,
+  fontFamily: typography.displayFontFamily || typography.fontFamily,
   fontSize: isCompact ? typography.fontSizes.large : typography.fontSizes.xl,
   fontWeight: typography.fontWeights.bold,
-  letterSpacing: "0.02em",
+  letterSpacing: "0.025em",
   transition: "font-size 0.25s ease, color 0.25s ease",
 });
 
@@ -66,8 +66,10 @@ export const getHeaderRightStyles = ({ isCompact = false }) => ({
   alignItems: "center",
   gap: `${isCompact ? spacing.xs : spacing.md}px`,
   color: colors.text.secondary,
-  fontFamily: typography.fontFamily,
-  fontSize: isCompact ? typography.fontSizes.small : typography.fontSizes.medium,
+  fontFamily: typography.labelFontFamily || typography.fontFamily,
+  fontSize: isCompact ? typography.fontSizes.labelSm || typography.fontSizes.small : typography.fontSizes.small,
   fontWeight: typography.fontWeights.medium,
+  letterSpacing: "0.08em",
+  textTransform: "uppercase",
   transition: "gap 0.25s ease, font-size 0.25s ease",
 });

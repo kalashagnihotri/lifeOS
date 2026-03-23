@@ -18,7 +18,7 @@ export const getTimerCardStyles = ({ isRunning = false, isZenMode = false }) => 
   boxShadow: isZenMode
     ? "none"
     : isRunning
-      ? "0 0 0 1px rgba(167, 176, 255, 0.48), 0 18px 34px rgba(8, 10, 15, 0.5)"
+      ? "0 0 0 1px rgba(189, 192, 200, 0.42), 0 18px 34px rgba(8, 10, 15, 0.5)"
       : "0 14px 28px rgba(8, 10, 15, 0.42)",
   animation: isRunning ? "lifeosPulseSoft 1.8s infinite" : "none",
   transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
@@ -42,7 +42,7 @@ export const getTimerDisplayStyles = ({ isRunning = false }) => ({
   fontWeight: typography.fontWeights.bold,
   lineHeight: 1,
   letterSpacing: "0.06em",
-  textShadow: isRunning ? "0 0 24px rgba(167, 176, 255, 0.3)" : "none",
+  textShadow: isRunning ? "0 0 24px rgba(197, 199, 206, 0.24)" : "none",
   transition: "color 0.25s ease, transform 0.25s ease",
 });
 
@@ -68,7 +68,7 @@ export const getPomodoroModeSelectorStyles = () => ({
 export const getPomodoroModeButtonStyles = ({ isActive = false }) => ({
   border: `1px solid ${isActive ? colors.primary : "transparent"}`,
   borderRadius: spacing.sm,
-  backgroundColor: isActive ? "rgba(167, 176, 255, 0.2)" : "transparent",
+  backgroundColor: isActive ? "rgba(188, 191, 199, 0.18)" : "transparent",
   color: isActive ? colors.text.primary : colors.text.secondary,
   padding: `${spacing.xs}px ${spacing.sm}px`,
   fontFamily: typography.fontFamily,

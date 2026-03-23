@@ -1,10 +1,11 @@
 import { useCallback, useMemo } from "react";
 import { useEffect } from "react";
-import { BedDouble, Brain, CheckSquare, LayoutDashboard, Timer } from "lucide-react";
+import { BedDouble, Brain, CheckSquare, Notebook, LayoutDashboard, Timer } from "lucide-react";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Tasks from "../pages/Tasks/Tasks";
 import Focus from "../pages/Focus/Focus";
 import Insights from "../pages/Insights/Insights";
+import Notes from "../pages/Notes/Notes";
 import Sleep from "../pages/Sleep/Sleep";
 import LoginButton from "../features/auth/components/LoginButton";
 import useAuth from "../features/auth/hooks/useAuth";
@@ -21,8 +22,10 @@ import ToastContainer from "../shared/components/Toast/ToastContainer";
 import QuickAdd from "../features/quick_add/components/QuickAdd";
 import useQuickAdd from "../features/quick_add/hooks/useQuickAdd";
 import Desktop from "../features/desktop/components/Desktop";
+import useNotes from "../features/notes/hooks/useNotes";
 import Window from "../features/window_manager/components/Window";
 import useWindowManager from "../features/window_manager/hooks/useWindowManager";
+import SpaceBackground from "../core/background/SpaceBackground";
 
 const APP_REGISTRY = {
   dashboard: {
@@ -49,6 +52,14 @@ const APP_REGISTRY = {
     icon: Timer,
     component: Focus,
   },
+  notes: {
+    id: "notes",
+    title: "Notes",
+    label: "Notes",
+    hash: "#/notes",
+    icon: Notebook,
+    component: Notes,
+  },
   insights: {
     id: "insights",
     title: "Insights",
@@ -71,6 +82,7 @@ const APP_BY_HASH = {
   "#/dashboard": APP_REGISTRY.dashboard,
   "#/tasks": APP_REGISTRY.tasks,
   "#/focus": APP_REGISTRY.focus,
+  "#/notes": APP_REGISTRY.notes,
   "#/insights": APP_REGISTRY.insights,
   "#/sleep": APP_REGISTRY.sleep,
 };
@@ -81,12 +93,19 @@ const DESKTOP_APPS = [
   APP_REGISTRY.dashboard,
   APP_REGISTRY.tasks,
   APP_REGISTRY.focus,
+  APP_REGISTRY.notes,
   APP_REGISTRY.sleep,
   APP_REGISTRY.insights,
 ];
 
 const resolveAppFromHash = (hash) => {
   return APP_BY_HASH[hash] || APP_REGISTRY.dashboard;
+};
+
+const APP_FOREGROUND_STYLES = {
+  position: "relative",
+  zIndex: 1,
+  minHeight: "100vh",
 };
 
 function App() {
@@ -111,6 +130,12 @@ function App() {
     setInputValue,
     submitTask,
   } = useQuickAdd({ enabled: Boolean(user) });
+  const {
+    notes,
+    addNote,
+    updateNote,
+    deleteNote,
+  } = useNotes();
 
   const openAppWindow = useCallback((appId) => {
     const app = APP_REGISTRY[appId];
@@ -198,76 +223,86 @@ function App() {
   if (!user) {
     return (
       <>
-        <section style={getLoginScreenStyles()}>
-          <div style={getLoginCardStyles()}>
-            <h1 style={getLoginTitleStyles()}>LifeOS</h1>
-            <p style={getLoginSubtitleStyles()}>
-              Sign in to sync your productivity system across your personal workspace.
-            </p>
-            <LoginButton onClick={login} />
-          </div>
-        </section>
-        <ToastContainer />
+        <SpaceBackground />
+        <div style={APP_FOREGROUND_STYLES}>
+          <section style={getLoginScreenStyles()}>
+            <div style={getLoginCardStyles()}>
+              <h1 style={getLoginTitleStyles()}>LifeOS</h1>
+              <p style={getLoginSubtitleStyles()}>
+                Sign in to sync your productivity system across your personal workspace.
+              </p>
+              <LoginButton onClick={login} />
+            </div>
+          </section>
+          <ToastContainer />
+        </div>
       </>
     );
   }
 
   return (
     <>
-      <div style={getTopBarStyles()}>
-        <p style={getUserBadgeStyles()}>{user.displayName || user.email}</p>
-        <Button label="Sign Out" onClick={logout} variant="secondary" size="small" />
+      <SpaceBackground />
+      <div style={APP_FOREGROUND_STYLES}>
+        <div style={getTopBarStyles()}>
+          <p style={getUserBadgeStyles()}>{user.displayName || user.email}</p>
+          <Button label="Sign Out" onClick={logout} variant="glass" size="small" />
+        </div>
+
+        <Desktop
+          apps={DESKTOP_APPS}
+          dockWindows={dockWindows}
+          notes={notes}
+          onCreateNote={addNote}
+          onUpdateNote={updateNote}
+          onDeleteNote={deleteNote}
+          onOpenApp={openAppWindow}
+          onActivateDockWindow={activateDockWindow}
+          onRestoreWindow={restoreWindow}
+          onCloseDockWindow={closeWindow}
+          onCloseAllWindows={handleCloseAllWindows}
+        >
+          {openWindows.map((windowItem) => {
+            const WindowComponent = windowItem.component;
+
+            return (
+              <Window
+                key={windowItem.id}
+                id={windowItem.id}
+                title={windowItem.title}
+                position={windowItem.position}
+                size={windowItem.size}
+                zIndex={windowItem.zIndex}
+                isMinimized={windowItem.isMinimized}
+                isMinimizing={windowItem.isMinimizing}
+                isRestoring={windowItem.isRestoring}
+                isDragging={windowItem.isDragging}
+                isResizing={windowItem.isResizing}
+                isMaximized={windowItem.isMaximized}
+                snapPreview={windowItem.snapPreview}
+                isActive={activeWindow === windowItem.id}
+                onActivate={focusWindow}
+                onClose={closeWindow}
+                onMinimize={minimizeWindow}
+                onMaximize={maximizeWindow}
+                onStartDrag={startDrag}
+                onStartResize={startResize}
+              >
+                {WindowComponent ? <WindowComponent windowMode /> : null}
+              </Window>
+            );
+          })}
+        </Desktop>
+
+        <QuickAdd
+          isOpen={isQuickAddOpen}
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          closeQuickAdd={closeQuickAdd}
+          submitTask={submitTask}
+        />
+        <ToastContainer />
       </div>
-
-      <Desktop
-        apps={DESKTOP_APPS}
-        dockWindows={dockWindows}
-        onOpenApp={openAppWindow}
-        onActivateDockWindow={activateDockWindow}
-        onRestoreWindow={restoreWindow}
-        onCloseDockWindow={closeWindow}
-        onCloseAllWindows={handleCloseAllWindows}
-      >
-        {openWindows.map((windowItem) => {
-          const WindowComponent = windowItem.component;
-
-          return (
-            <Window
-              key={windowItem.id}
-              id={windowItem.id}
-              title={windowItem.title}
-              position={windowItem.position}
-              size={windowItem.size}
-              zIndex={windowItem.zIndex}
-              isMinimized={windowItem.isMinimized}
-              isMinimizing={windowItem.isMinimizing}
-              isRestoring={windowItem.isRestoring}
-              isDragging={windowItem.isDragging}
-              isResizing={windowItem.isResizing}
-              isMaximized={windowItem.isMaximized}
-              snapPreview={windowItem.snapPreview}
-              isActive={activeWindow === windowItem.id}
-              onActivate={focusWindow}
-              onClose={closeWindow}
-              onMinimize={minimizeWindow}
-              onMaximize={maximizeWindow}
-              onStartDrag={startDrag}
-              onStartResize={startResize}
-            >
-              {WindowComponent ? <WindowComponent windowMode /> : null}
-            </Window>
-          );
-        })}
-      </Desktop>
-
-      <QuickAdd
-        isOpen={isQuickAddOpen}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        closeQuickAdd={closeQuickAdd}
-        submitTask={submitTask}
-      />
-      <ToastContainer />
     </>
   );
 }

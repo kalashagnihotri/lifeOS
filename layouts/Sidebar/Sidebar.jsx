@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Brain, CheckSquare, LayoutDashboard, Timer } from "lucide-react";
+import { Brain, CheckSquare, Notebook, LayoutDashboard, Timer } from "lucide-react";
 import {
   getSidebarItemContentStyles,
   getSidebarIconWrapStyles,
@@ -17,6 +17,7 @@ const menuItems = [
   { label: "Dashboard", route: "#/dashboard", icon: LayoutDashboard },
   { label: "Tasks", route: "#/tasks", icon: CheckSquare },
   { label: "Focus", route: "#/focus", icon: Timer },
+  { label: "Notes", route: "#/notes", icon: Notebook },
   { label: "Insights", route: "#/insights", icon: Brain },
 ];
 

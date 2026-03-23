@@ -18,7 +18,7 @@ export const getLayoutRootStyles = ({ isCompact = false }) => ({
   display: "flex",
   background: isCompact
     ? colors.background
-    : `radial-gradient(circle at 82% 8%, ${hexToRgba(colors.primary, 0.14)} 0%, ${colors.background} 48%)`,
+    : `radial-gradient(circle at 86% 4%, ${hexToRgba(colors.primary, 0.08)} 0%, ${colors.background} 50%), radial-gradient(circle at 12% 108%, ${hexToRgba(colors.secondary, 0.07)} 0%, ${colors.background} 45%)`,
   overflow: "hidden",
   transition: "background 0.28s ease",
 });
@@ -28,8 +28,8 @@ export const getMainSectionStyles = ({ isCompact = false }) => ({
   minWidth: 0,
   display: "flex",
   flexDirection: "column",
-  backgroundColor: colors.background,
-  boxShadow: isCompact ? "none" : `inset 1px 0 0 ${colors.border}`,
+  background: "linear-gradient(180deg, rgba(31, 31, 31, 0.44) 0%, rgba(19, 19, 19, 0.56) 100%)",
+  boxShadow: isCompact ? "none" : `inset 1px 0 0 ${hexToRgba(colors.outlineVariant || colors.border, 0.12)}`,
   transition: "box-shadow 0.25s ease",
 });
 

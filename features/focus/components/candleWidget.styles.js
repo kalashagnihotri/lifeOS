@@ -60,7 +60,7 @@ export const getCandleWidgetTopRowStyles = () => ({
 export const getCandleWidgetPinButtonStyles = ({ isPinned = false }) => ({
   border: "none",
   borderRadius: spacing.xs,
-  backgroundColor: isPinned ? "rgba(167, 176, 255, 0.26)" : "rgba(15, 17, 23, 0.55)",
+  backgroundColor: isPinned ? "rgba(189, 192, 201, 0.24)" : "rgba(15, 17, 23, 0.55)",
   color: colors.text.secondary,
   padding: "2px 8px",
   fontFamily: typography.fontFamily,
@@ -78,6 +78,6 @@ export const getCandleWidgetResizeHandleStyles = ({ isResizing = false }) => ({
   borderRadius: "2px 0 6px 0",
   cursor: "nwse-resize",
   background: isResizing
-    ? "linear-gradient(135deg, transparent 0%, transparent 35%, rgba(167, 176, 255, 0.86) 100%)"
-    : "linear-gradient(135deg, transparent 0%, transparent 35%, rgba(167, 176, 255, 0.56) 100%)",
+    ? "linear-gradient(135deg, transparent 0%, transparent 35%, rgba(196, 199, 207, 0.82) 100%)"
+    : "linear-gradient(135deg, transparent 0%, transparent 35%, rgba(196, 199, 207, 0.52) 100%)",
 });

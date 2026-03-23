@@ -10,7 +10,7 @@ export const getLoginScreenStyles = () => ({
   alignItems: "center",
   justifyContent: "center",
   padding: `${spacing.xl}px`,
-  backgroundColor: colors.background,
+  backgroundColor: "transparent",
 });
 
 export const getLoginCardStyles = () => ({
@@ -47,10 +47,12 @@ export const getLoginSubtitleStyles = () => ({
 
 export const getUserBadgeStyles = () => ({
   margin: 0,
-  color: colors.text.muted,
+  color: "rgba(231, 231, 234, 0.9)",
   fontFamily: typography.fontFamily,
   fontSize: typography.fontSizes.small,
   fontWeight: typography.fontWeights.medium,
+  letterSpacing: "0.02em",
+  textShadow: "0 1px 8px rgba(203, 205, 212, 0.18)",
 });
 
 export const getTopBarStyles = () => ({
@@ -62,10 +64,11 @@ export const getTopBarStyles = () => ({
   alignItems: "center",
   gap: `${spacing.sm}px`,
   padding: `${spacing.xs}px ${spacing.sm}px`,
-  border: "1px solid rgba(255, 255, 255, 0.16)",
-  borderRadius: spacing.sm,
-  backgroundColor: "rgba(20, 20, 30, 0.72)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
-  boxShadow: "0 14px 28px rgba(8, 10, 15, 0.3)",
+  border: "1px solid rgba(216, 218, 224, 0.24)",
+  borderRadius: spacing.md,
+  background:
+    "linear-gradient(130deg, rgba(28, 28, 32, 0.42) 0%, rgba(12, 12, 14, 0.62) 100%)",
+  backdropFilter: "blur(18px) saturate(1.24)",
+  WebkitBackdropFilter: "blur(18px) saturate(1.24)",
+  boxShadow: "0 14px 28px rgba(8, 10, 15, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.14)",
 });

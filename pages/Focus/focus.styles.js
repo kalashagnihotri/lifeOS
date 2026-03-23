@@ -7,7 +7,7 @@ export const getFocusPageStyles = () => ({
   minHeight: "100%",
   width: "100%",
   background:
-    "radial-gradient(circle at 50% 10%, rgba(167, 176, 255, 0.12) 0%, rgba(15, 17, 23, 0) 42%), #0f1117",
+    "radial-gradient(circle at 50% 10%, rgba(200, 202, 208, 0.1) 0%, rgba(15, 17, 23, 0) 42%), #0a0a0b",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",

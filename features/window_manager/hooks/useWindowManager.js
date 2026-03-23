@@ -6,7 +6,7 @@ const MIN_WIDTH = 340;
 const MIN_HEIGHT = 240;
 const CASCADE_STEP = 28;
 const BASE_Z_INDEX = 20;
-const SNAP_EDGE_THRESHOLD = 24;
+const SNAP_EDGE_THRESHOLD = 40;
 
 const getHighestZWindow = (windows, { includeMinimized = true } = {}) => {
   const candidates = includeMinimized
@@ -64,6 +64,31 @@ const resolveComponent = (component) => {
   }
 
   return () => component;
+};
+
+const getRenderedWindowRect = (windowId) => {
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  const windowElement = document.querySelector(`[data-window-id='${String(windowId)}']`);
+
+  if (!windowElement || typeof windowElement.getBoundingClientRect !== "function") {
+    return null;
+  }
+
+  const rect = windowElement.getBoundingClientRect();
+
+  if (!Number.isFinite(rect?.width) || !Number.isFinite(rect?.height)) {
+    return null;
+  }
+
+  return {
+    x: Number.isFinite(rect.left) ? Math.round(rect.left) : null,
+    y: Number.isFinite(rect.top) ? Math.round(rect.top) : null,
+    width: Math.max(MIN_WIDTH, Math.round(rect.width)),
+    height: Math.max(MIN_HEIGHT, Math.round(rect.height)),
+  };
 };
 
 const normalizeWindow = (windowConfig, index = 0, zIndex = BASE_Z_INDEX) => {
@@ -267,12 +292,15 @@ const useWindowManager = ({ initialWindows = [] } = {}) => {
             };
 
       const normalized = normalizeWindow(windowConfig, 0, BASE_Z_INDEX);
+      let shouldClearRestoreState = false;
 
       setOpenWindows((previousWindows) => {
         const existing = previousWindows.find((windowItem) => windowItem.id === normalized.id);
 
         if (existing) {
           clearWindowTimers(normalized.id);
+          const isReturningFromMinimized = existing.isMinimized || existing.isMinimizing;
+          shouldClearRestoreState = isReturningFromMinimized;
 
           return previousWindows.map((windowItem) => {
             if (windowItem.id !== normalized.id) {
@@ -283,7 +311,7 @@ const useWindowManager = ({ initialWindows = [] } = {}) => {
               ...windowItem,
               isMinimized: false,
               isMinimizing: false,
-              isRestoring: true,
+              isRestoring: isReturningFromMinimized,
             };
           });
         }
@@ -307,6 +335,27 @@ const useWindowManager = ({ initialWindows = [] } = {}) => {
           },
         ];
       });
+
+      if (shouldClearRestoreState) {
+        const restoreTimer = window.setTimeout(() => {
+          setOpenWindows((previousWindows) => {
+            return previousWindows.map((windowItem) => {
+              if (windowItem.id !== normalized.id) {
+                return windowItem;
+              }
+
+              return {
+                ...windowItem,
+                isRestoring: false,
+              };
+            });
+          });
+
+          timerRef.current.restore.delete(normalized.id);
+        }, 180);
+
+        timerRef.current.restore.set(normalized.id, restoreTimer);
+      }
 
       setActiveWindowSafe(normalized.id);
       focusWindow(normalized.id);
@@ -598,6 +647,7 @@ const useWindowManager = ({ initialWindows = [] } = {}) => {
     (id, event) => {
       const safeId = String(id);
       const targetWindow = openWindows.find((windowItem) => windowItem.id === safeId);
+      const renderedRect = getRenderedWindowRect(safeId);
 
       if (!targetWindow) {
         return;
@@ -655,10 +705,10 @@ const useWindowManager = ({ initialWindows = [] } = {}) => {
 
       dragRef.current = {
         id: safeId,
-        offsetX: event.clientX - targetWindow.position.x,
-        offsetY: event.clientY - targetWindow.position.y,
-        width: targetWindow.size.width,
-        height: targetWindow.size.height,
+        offsetX: event.clientX - (renderedRect?.x ?? targetWindow.position.x),
+        offsetY: event.clientY - (renderedRect?.y ?? targetWindow.position.y),
+        width: renderedRect?.width ?? targetWindow.size.width,
+        height: renderedRect?.height ?? targetWindow.size.height,
         lastClientX: event.clientX,
         lastClientY: event.clientY,
       };
@@ -791,13 +841,19 @@ const useWindowManager = ({ initialWindows = [] } = {}) => {
     const handleMouseUp = (event) => {
       if (dragRef.current.id) {
         const draggingId = dragRef.current.id;
+        const draggingSnapshot = {
+          width: dragRef.current.width,
+          height: dragRef.current.height,
+          lastClientX: dragRef.current.lastClientX,
+          lastClientY: dragRef.current.lastClientY,
+        };
         const isPendingDragFrame =
           frameRef.current.mode === "drag" && frameRef.current.windowId === draggingId;
         const pendingX = frameRef.current.nextX;
         const pendingY = frameRef.current.nextY;
         const pendingSnapPreview = frameRef.current.snapPreview;
-        const releaseClientX = Number.isFinite(event?.clientX) ? event.clientX : dragRef.current.lastClientX;
-        const releaseClientY = Number.isFinite(event?.clientY) ? event.clientY : dragRef.current.lastClientY;
+        const releaseClientX = Number.isFinite(event?.clientX) ? event.clientX : draggingSnapshot.lastClientX;
+        const releaseClientY = Number.isFinite(event?.clientY) ? event.clientY : draggingSnapshot.lastClientY;
 
         dragRef.current = {
           id: null,
@@ -823,14 +879,14 @@ const useWindowManager = ({ initialWindows = [] } = {}) => {
               : windowItem.position.y;
             const releaseSnapPreview = Number.isFinite(releaseClientX) && Number.isFinite(releaseClientY)
               ? resolveSnapTarget(releaseClientX, releaseClientY, {
-                  windowLeft: windowItem.position.x,
-                  windowRight: windowItem.position.x + windowItem.size.width,
-                  windowTop: windowItem.position.y,
+                  windowLeft: finalX,
+                  windowRight: finalX + draggingSnapshot.width,
+                  windowTop: finalY,
                 })
               : null;
-            const effectiveSnapPreview = isPendingDragFrame
-              ? pendingSnapPreview
-              : releaseSnapPreview || windowItem.snapPreview;
+            const effectiveSnapPreview = releaseSnapPreview
+              || (isPendingDragFrame ? pendingSnapPreview : null)
+              || windowItem.snapPreview;
 
             if (effectiveSnapPreview === "left") {
               return {

@@ -20,22 +20,23 @@ export const getWindowShellStyles = ({
   position: "absolute",
   top: isMaximized ? 0 : `${Math.max(0, y)}px`,
   left: isMaximized ? 0 : `${Math.max(0, x)}px`,
-  width: isMaximized ? "100vw" : `min(${Number.isFinite(width) ? width : 780}px, calc(100vw - 56px))`,
-  height: isMaximized ? "100vh" : isMinimized ? "auto" : `min(${Number.isFinite(height) ? height : 520}px, calc(100vh - 64px))`,
+  width: isMaximized ? "100vw" : `${Number.isFinite(width) ? width : 780}px`,
+  height: isMaximized ? "100vh" : isMinimized ? "auto" : `${Number.isFinite(height) ? height : 520}px`,
+  maxWidth: "100vw",
   minHeight: isMinimized ? "auto" : "320px",
-  maxHeight: isMaximized ? "100vh" : "calc(100vh - 64px)",
+  maxHeight: "100vh",
   display: "flex",
   flexDirection: "column",
   borderRadius: isMaximized ? 0 : spacing.lg,
-  border: `1px solid ${isActive ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.12)"}`,
+  border: `1px solid ${isActive ? "rgba(71, 71, 71, 0.16)" : "rgba(71, 71, 71, 0.12)"}`,
   background: isActive
-    ? "linear-gradient(160deg, rgba(20, 20, 30, 0.72) 0%, rgba(16, 20, 32, 0.74) 100%)"
-    : "linear-gradient(160deg, rgba(20, 20, 30, 0.66) 0%, rgba(14, 18, 29, 0.68) 100%)",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
+    ? "linear-gradient(160deg, rgba(31, 31, 31, 0.62) 0%, rgba(23, 23, 23, 0.58) 100%)"
+    : "linear-gradient(160deg, rgba(31, 31, 31, 0.54) 0%, rgba(20, 20, 20, 0.5) 100%)",
+  backdropFilter: "blur(24px)",
+  WebkitBackdropFilter: "blur(24px)",
   boxShadow: isActive
-    ? "0 24px 44px rgba(8, 10, 15, 0.44), 0 0 0 1px rgba(255, 255, 255, 0.08)"
-    : "0 14px 28px rgba(8, 10, 15, 0.3)",
+    ? "0 26px 58px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.12)"
+    : "0 18px 42px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08)",
   overflow: "hidden",
   zIndex,
   userSelect: "none",
@@ -61,10 +62,12 @@ export const getWindowHeaderStyles = ({ isActive = false }) => ({
   justifyContent: "flex-start",
   gap: `${spacing.sm}px`,
   padding: `${spacing.sm}px ${spacing.md}px`,
-  borderBottom: `1px solid ${isActive ? "rgba(255, 255, 255, 0.18)" : "rgba(255, 255, 255, 0.1)"}`,
-  backgroundColor: isActive ? "rgba(20, 20, 30, 0.78)" : "rgba(20, 20, 30, 0.68)",
-  backdropFilter: "blur(14px)",
-  WebkitBackdropFilter: "blur(14px)",
+  background:
+    isActive
+      ? "radial-gradient(circle at 12% -40%, rgba(255, 255, 255, 0.08) 0%, rgba(31, 31, 31, 0) 46%), rgba(31, 31, 31, 0.5)"
+      : "rgba(31, 31, 31, 0.42)",
+  backdropFilter: "blur(24px)",
+  WebkitBackdropFilter: "blur(24px)",
   cursor: "grab",
 });
 
@@ -100,9 +103,9 @@ export const getWindowTitleStyles = () => ({
 
 export const getWindowCloseButtonStyles = ({ isHovered = false, tone = "close" }) => {
   const toneMap = {
-    close: "#FF5F57",
-    minimize: "#FEBC2E",
-    maximize: "#28C840",
+    close: "#D6D6D8",
+    minimize: "#B7B8BD",
+    maximize: "#8F9096",
   };
 
   const toneColor = toneMap[tone] || toneMap.close;
@@ -134,7 +137,7 @@ export const getWindowContentStyles = ({ isMinimized = false } = {}) => ({
   display: isMinimized ? "none" : "block",
   overflow: "auto",
   padding: `${spacing.md}px`,
-  backgroundColor: "rgba(20, 20, 30, 0.78)",
+  backgroundColor: "rgba(27, 27, 27, 0.62)",
 });
 
 export const getWindowResizeHandleStyles = ({ direction = "corner" }) => {
@@ -170,7 +173,7 @@ export const getWindowResizeHandleStyles = ({ direction = "corner" }) => {
     height: "14px",
     cursor: "nwse-resize",
     zIndex: 3,
-    background: "linear-gradient(135deg, transparent 0%, transparent 40%, rgba(167, 176, 255, 0.55) 100%)",
+    background: "linear-gradient(135deg, transparent 0%, transparent 40%, rgba(202, 204, 210, 0.5) 100%)",
   };
 };
 
@@ -179,9 +182,10 @@ export const getWindowSnapPreviewStyles = ({ snapPreview }) => {
     position: "fixed",
     pointerEvents: "none",
     zIndex: 12,
-    border: "1px solid rgba(167, 176, 255, 0.6)",
-    background: "rgba(167, 176, 255, 0.18)",
-    boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.12)",
+    border: "1px solid rgba(71, 71, 71, 0.16)",
+    background: "rgba(231, 231, 233, 0.08)",
+    backdropFilter: "blur(12px)",
+    boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 0 0 1px rgba(71, 71, 71, 0.12)",
     transition: "all 0.1s ease",
   };
 

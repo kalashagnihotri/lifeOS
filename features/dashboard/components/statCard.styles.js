@@ -27,7 +27,7 @@ export const getStatCardValueStyles = () => ({
   fontWeight: typography.fontWeights.bold,
   lineHeight: 1,
   letterSpacing: "0.01em",
-  textShadow: "0 0 18px rgba(167, 176, 255, 0.22)",
+  textShadow: "0 0 16px rgba(198, 201, 208, 0.18)",
 });
 
 export const getStatCardDescriptionStyles = () => ({

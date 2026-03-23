@@ -33,24 +33,28 @@ export const getInputStyles = ({
   const borderColor = hasError
     ? colors.error
     : isFocused
-      ? colors.primary
+      ? hexToRgba(colors.outlineVariant || colors.border, 0.22)
       : isHovered
-        ? colors.text.muted
-        : colors.border;
+        ? hexToRgba(colors.outlineVariant || colors.border, 0.16)
+        : "transparent";
 
   return {
     width: "100%",
-    backgroundColor: isFocused ? hexToRgba(colors.surface, 0.95) : hexToRgba(colors.surface, 0.82),
+    backgroundColor: isFocused
+      ? "rgba(42, 42, 42, 0.78)"
+      : "rgba(22, 22, 22, 0.72)",
     color: colors.text.primary,
     border: `1px solid ${borderColor}`,
     borderRadius: spacing.md,
     padding: `${spacing.sm}px ${spacing.md}px`,
     outline: "none",
-    boxShadow: isFocused ? `0 0 0 ${spacing.xs}px ${hexToRgba(colors.secondary, 0.45)}` : "none",
-    fontFamily: typography.fontFamily,
+    boxShadow: isFocused
+      ? `inset 0 0 0 1px ${hexToRgba(colors.primary, 0.2)}, 0 0 0 ${spacing.xs}px ${hexToRgba(colors.outlineVariant || colors.border, 0.2)}`
+      : "inset 0 1px 0 rgba(255, 255, 255, 0.04)",
+    fontFamily: typography.bodyFontFamily || typography.fontFamily,
     fontSize: typography.fontSizes.medium,
     fontWeight: typography.fontWeights.regular,
-    backdropFilter: "blur(8px)",
+    backdropFilter: "blur(20px)",
     transition: "border-color 0.28s ease, box-shadow 0.28s ease, background-color 0.28s ease",
   };
 };

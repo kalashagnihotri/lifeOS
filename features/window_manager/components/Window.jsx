@@ -82,6 +82,7 @@ const Window = ({
 
   return (
     <article
+      data-window-id={id}
       style={getWindowShellStyles({
         x: position?.x,
         y: position?.y,
